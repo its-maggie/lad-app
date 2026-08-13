@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@500;600;700&display=swap" rel="stylesheet">
-<script src="schedule.js?v=20260811"></script>
+<script src="schedule.js?v=20260813"></script>
 <script src="packs.js"></script>
 <style>
   :root{
@@ -193,6 +193,20 @@
   .cal-title{font-family:"Cormorant Garamond",serif;font-size:24px;font-weight:600;letter-spacing:1px}
   .navbtn{width:40px;height:40px;min-height:0;padding:0;border-radius:11px;background:rgba(255,255,255,.12);border:1px solid var(--line)}
   .navbtn svg{width:18px;height:18px;stroke-width:1.8}
+  .lead-filter{margin:0 0 16px;padding:13px;border:1px solid var(--line-soft);border-radius:15px;background:rgba(255,255,255,.07)}
+  .lead-filter-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;font-size:12px;letter-spacing:.5px}
+  .lead-filter-head span:last-child{color:var(--faint);font-size:10px}
+  .lead-filter-actions{display:flex;flex-wrap:wrap;gap:7px}
+  .lead-filter-btn{--lead:#fff;--lead-bg:rgba(255,255,255,.16);min-height:34px;padding:6px 10px;border-radius:99px;background:transparent;border:1px solid var(--line-soft);font-size:12px;letter-spacing:.2px;color:var(--muted);gap:6px}
+  .lead-filter-btn:hover{background:rgba(255,255,255,.1)}
+  .lead-filter-btn.active{color:#fff;background:var(--lead-bg);border-color:var(--lead);box-shadow:inset 0 0 0 1px var(--lead)}
+  .lead-filter-btn.all.active{--lead:#fff;--lead-bg:rgba(255,255,255,.17)}
+  .lead-dot{width:8px;height:8px;border-radius:50%;background:var(--lead);box-shadow:0 0 0 2px rgba(255,255,255,.14)}
+  .lead-xavier{--lead:#a78bfa;--lead-bg:rgba(167,139,250,.22)}
+  .lead-zayne{--lead:#59b8ff;--lead-bg:rgba(89,184,255,.22)}
+  .lead-rafayel{--lead:#ff88bf;--lead-bg:rgba(255,136,191,.22)}
+  .lead-sylus{--lead:#ff6675;--lead-bg:rgba(255,102,117,.22)}
+  .lead-caleb{--lead:#ffad5c;--lead-bg:rgba(255,173,92,.22)}
   .cal-wk{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:6px}
   .cal-wk span{text-align:center;font-size:11px;color:var(--faint);letter-spacing:1px}
   .cal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px;position:relative}
@@ -220,6 +234,10 @@
   .t-story{background:var(--c-story);color:var(--c-story)}
   .cal-legend{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:14px;padding-top:13px;border-top:1px solid var(--line-soft);font-size:11px;color:var(--muted)}
   .cal-legend span{display:inline-flex;align-items:center;gap:5px;letter-spacing:.3px}
+  .event-name{display:flex;align-items:center;flex-wrap:wrap;gap:6px}
+  .lead-tag{--lead:#fff;--lead-bg:rgba(255,255,255,.12);display:inline-flex;align-items:center;gap:4px;border:1px solid var(--lead);border-radius:99px;padding:1px 6px;background:var(--lead-bg);font-size:10px;font-weight:500;line-height:1.5;color:#fff;white-space:nowrap}
+  .lead-tag.multi{--lead:var(--line-soft);--lead-bg:rgba(255,255,255,.08);color:var(--muted)}
+  .lead-tag .lead-dot{width:6px;height:6px;box-shadow:none}
   .daytitle-row{display:flex;align-items:center;justify-content:space-between;gap:10px}
   .linkbtn{background:none;border:none;color:#fff;font-size:12px;min-height:0;padding:6px 4px;letter-spacing:.5px;text-decoration:underline;text-underline-offset:3px}
   .lock{display:inline-flex;align-items:center;gap:5px;font-size:10px;color:var(--faint);border:1px solid var(--line-soft);padding:3px 8px;border-radius:99px;letter-spacing:.5px}
@@ -359,6 +377,17 @@
         <div class="cal-title" id="calTitle"></div>
         <button class="navbtn" aria-label="下個月" onclick="calMove(1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
       </div>
+      <div class="lead-filter" aria-label="男主篩選">
+        <div class="lead-filter-head"><span>男主篩選</span><span id="leadFilterSummary">可多選</span></div>
+        <div class="lead-filter-actions" id="leadFilters">
+          <button class="lead-filter-btn all" type="button" data-lead="all" aria-pressed="true" onclick="selectAllLeads()">全部</button>
+          <button class="lead-filter-btn lead-xavier" type="button" data-lead="沈星回" aria-pressed="true" onclick="toggleLead('沈星回')"><i class="lead-dot"></i>沈星回</button>
+          <button class="lead-filter-btn lead-zayne" type="button" data-lead="黎深" aria-pressed="true" onclick="toggleLead('黎深')"><i class="lead-dot"></i>黎深</button>
+          <button class="lead-filter-btn lead-rafayel" type="button" data-lead="祁煜" aria-pressed="true" onclick="toggleLead('祁煜')"><i class="lead-dot"></i>祁煜</button>
+          <button class="lead-filter-btn lead-sylus" type="button" data-lead="秦徹" aria-pressed="true" onclick="toggleLead('秦徹')"><i class="lead-dot"></i>秦徹</button>
+          <button class="lead-filter-btn lead-caleb" type="button" data-lead="夏以晝" aria-pressed="true" onclick="toggleLead('夏以晝')"><i class="lead-dot"></i>夏以晝</button>
+        </div>
+      </div>
       <div class="cal-wk"><span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span></div>
       <div class="cal-grid" id="calGrid"></div>
       <div class="cal-legend">
@@ -369,8 +398,9 @@
         <span><i class="dot t-birthday"></i>生日池</span>
         <span><i class="dot t-rerun"></i>復刻池</span>
         <span><i class="dot t-pass"></i>密約</span>
+        <span><i class="dot t-story"></i>主線分線</span>
       </div>
-      <div class="hint">※「哥月」與「花承春意、甜夢清歡周邊」已有官方公告；其餘內容為 0804 排期預測，非官方資訊，實際卡池與日期請以《戀與深空》官方公告為準。</div>
+      <div class="hint">※「夏以晝月卡」與「花承春意、甜夢清歡周邊」已有官方公告；其餘內容為 0804 排期預測，非官方資訊，實際卡池與日期請以《戀與深空》官方公告為準。</div>
     </div>
 
     <div class="card">
@@ -582,7 +612,32 @@ function renderBudget(){
 const SCHED=(Array.isArray(window.SCHEDULE)?window.SCHEDULE:[]);
 const META=window.SCHEDULE_META||{};
 const evLabel={banner:'卡池',merch:'周邊',daily:'日卡池',monthly:'月卡池',mixed:'混池',birthday:'生日池',rerun:'復刻池',story:'主線分線',pass:'密約',event:'其他'};
+const LEADS=[
+  {name:'沈星回',cls:'lead-xavier'},
+  {name:'黎深',cls:'lead-zayne'},
+  {name:'祁煜',cls:'lead-rafayel'},
+  {name:'秦徹',cls:'lead-sylus'},
+  {name:'夏以晝',cls:'lead-caleb'}
+];
+const leadNames=LEADS.map(l=>l.name);
+const savedLeadFilter=DB.get('leadFilter',null);
+let selectedLeads=new Set(Array.isArray(savedLeadFilter)?savedLeadFilter.filter(name=>leadNames.includes(name)):leadNames);
 let calY,calM,calSel=null;
+function filteredSchedule(){return SCHED.filter(e=>!Array.isArray(e.leads)||e.leads.length===0||e.leads.some(name=>selectedLeads.has(name)));}
+function syncLeadFilters(){
+  document.querySelectorAll('#leadFilters [data-lead]').forEach(btn=>{
+    const name=btn.dataset.lead;
+    const active=name==='all'?selectedLeads.size===leadNames.length:selectedLeads.has(name);
+    btn.classList.toggle('active',active);btn.setAttribute('aria-pressed',String(active));
+  });
+  const summary=document.getElementById('leadFilterSummary');
+  if(summary)summary.textContent=selectedLeads.size===leadNames.length?'已顯示全部':selectedLeads.size?`已選 ${selectedLeads.size} 位`:'尚未選擇';
+}
+function toggleLead(name){
+  if(selectedLeads.has(name))selectedLeads.delete(name);else selectedLeads.add(name);
+  DB.set('leadFilter',[...selectedLeads]);calSel=null;renderCal();
+}
+function selectAllLeads(){selectedLeads=new Set(leadNames);DB.set('leadFilter',leadNames);calSel=null;renderCal();}
 function dayDiff(d){return Math.ceil((new Date(d+'T00:00:00')-new Date(todayStr()+'T00:00:00'))/86400000);}
 function evInfo(e){
   if(!e.start)return{pill:e.tentative?'情報':'日期待定',cls:'tbd'};
@@ -591,9 +646,9 @@ function evInfo(e){
   if(dS<=0)return{pill:`進行中 · 剩${dE}天`,cls:'live'};
   return{pill:`${dS}天後`,cls:'soon'};
 }
-function eventsByDay(){
+function eventsByDay(events){
   const map={};
-  SCHED.forEach(e=>{
+  events.forEach(e=>{
     if(!e.start)return;
     // 密約只掛在開始日，避免長期活動佔滿整個月曆。
     let d=new Date(e.start+'T00:00:00'),end=new Date((e.type==='pass'?e.start:(e.end||e.start))+'T00:00:00'),g=0;
@@ -608,16 +663,22 @@ function evItemHTML(e){
   const range=e.start?(e.end&&e.end!==e.start?`${e.start} ~ ${e.end}`:e.start):'日期未定';
   const sub=[evLabel[e.type]||'活動',range];
   if(e.cost)sub.push('預估 '+NT(e.cost));
+  const leads=Array.isArray(e.leads)?e.leads:[];
+  const leadTag=leads.length===1
+    ? `<span class="lead-tag ${LEADS.find(l=>l.name===leads[0])?.cls||''}"><i class="lead-dot"></i>${esc(leads[0])}</span>`
+    : leads.length>1?`<span class="lead-tag multi">${leads.length===leadNames.length?'全員':'多人'}</span>`:'';
   return `<div class="item">
     <span class="ico-chip ${e.type}">${svg(evIcon[e.type]||I.spark)}</span>
-    <div class="grow"><div class="t">${esc(e.name)}</div><div class="s">${sub.join(' · ')}</div></div>
+    <div class="grow"><div class="t event-name"><span>${esc(e.name)}</span>${leadTag}</div><div class="s">${sub.join(' · ')}</div></div>
     <span class="pill ${info.cls}">${info.pill}</span></div>`;
 }
 function renderCal(){
+  syncLeadFilters();
   document.getElementById('scheduleLabel').textContent=META.label||'排期資料';
   document.getElementById('calUpdated').textContent=META.updated?('排期更新 '+META.updated):'';
   document.getElementById('calTitle').textContent=`${calY}年 ${pad(calM+1)}月`;
-  const byDay=eventsByDay();
+  const schedule=filteredSchedule();
+  const byDay=eventsByDay(schedule);
   const first=new Date(calY,calM,1).getDay();
   const days=new Date(calY,calM+1,0).getDate();
   const weeks=Math.ceil((first+days)/7);
@@ -631,7 +692,7 @@ function renderCal(){
     cells+=`<button class="${cls}" style="grid-column:${col};grid-row:${row} / span 4" onclick="calSelect('${ds}')"><span class="d">${d}</span></button>`;
   }
   const monthKey=`${calY}-${pad(calM+1)}`,ms=`${monthKey}-01`,me=`${monthKey}-${pad(days)}`;
-  const visible=SCHED.filter(e=>e.start&&e.start<=me&&(e.type==='pass'?e.start:(e.end||e.start))>=ms)
+  const visible=schedule.filter(e=>e.start&&e.start<=me&&(e.type==='pass'?e.start:(e.end||e.start))>=ms)
     .map(e=>{
       const effectiveEnd=e.type==='pass'?e.start:(e.end||e.start);
       const startDay=e.start.startsWith(monthKey)?Number(e.start.slice(8,10)):1;
@@ -664,7 +725,7 @@ function renderCal(){
     clearBtn.style.display='';
   }else{
     title=`${pad(calM+1)}月 排期`;
-    listEvs=SCHED.filter(e=>e.start&&e.start<=me&&(e.end||e.start)>=ms).sort((a,b)=>a.start.localeCompare(b.start));
+    listEvs=schedule.filter(e=>e.start&&e.start<=me&&(e.end||e.start)>=ms).sort((a,b)=>a.start.localeCompare(b.start));
     clearBtn.style.display='none';
   }
   document.getElementById('dayTitle').textContent=title;
@@ -673,7 +734,7 @@ function renderCal(){
     : `<div class="empty">${svg(I.inbox)}${calSel?'這天沒有排期':'本月沒有已定日期的排期'}</div>`;
 
   // tbd / tentative-without-date
-  const tbd=SCHED.filter(e=>!e.start);
+  const tbd=schedule.filter(e=>!e.start);
   document.getElementById('tbdCard').style.display=tbd.length?'':'none';
   document.getElementById('tbdList').innerHTML=tbd.map(evItemHTML).join('');
 }
