@@ -1,0 +1,13 @@
+# macOS 系統檔
+.DS_Store
+
+# 個人原始資料（不需上線、不外流）
+*.csv
+
+# 網站沒用到的大圖
+Tulimond.com  About Page - interior design and visual art.png
+
+# Claude Code 本機設定
+.claude/
+.vercel
+.env*

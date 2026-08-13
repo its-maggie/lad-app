@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#2d2347">
+  <title>深空省省｜產品定位與 UX Research</title>
+  <meta name="description" content="深空省省的產品定位、User Journey、Proto-persona、JTBD 與 UX Research 計畫。">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&amp;family=Noto+Sans+TC:wght@400;500;600;700&amp;family=Noto+Serif+TC:wght@600&amp;display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --ink:#282238;--muted:#716a80;--paper:#fbf9fe;--card:rgba(255,255,255,.78);
+      --purple:#7664a7;--purple-dark:#493b70;--lavender:#e9e3f6;--pink:#f4d9e9;
+      --mint:#dff1ea;--yellow:#f8edc9;--line:rgba(73,59,112,.14);--shadow:0 22px 60px rgba(54,37,91,.10);
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{margin:0;color:var(--ink);background:
+      radial-gradient(circle at 10% 0%,rgba(244,217,233,.9),transparent 34rem),
+      radial-gradient(circle at 100% 10%,rgba(210,201,239,.9),transparent 36rem),var(--paper);
+      font-family:"Noto Sans TC",sans-serif;line-height:1.7}
+    a{color:inherit}
+    .shell{width:min(1120px,calc(100% - 40px));margin:auto}
+    .topbar{display:flex;justify-content:space-between;align-items:center;padding:24px 0;color:var(--purple-dark)}
+    .brand{font-family:"Noto Serif TC",serif;letter-spacing:.16em;font-weight:600}
+    .topbar a{font-size:13px;text-decoration:none;border-bottom:1px solid currentColor}
+    .hero{padding:74px 0 64px;display:grid;grid-template-columns:1.4fr .6fr;gap:48px;align-items:end}
+    .eyebrow,.section-label{font-size:12px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--purple)}
+    h1{font-family:"Noto Serif TC",serif;font-size:clamp(42px,7vw,82px);line-height:1.12;margin:16px 0 22px;letter-spacing:-.04em}
+    .lead{font-size:clamp(18px,2vw,23px);color:#514a5d;max-width:760px;margin:0}
+    .meta{border-left:1px solid var(--line);padding-left:24px;font-size:13px;color:var(--muted)}
+    .meta b{display:block;color:var(--ink);font-size:14px;margin-top:10px}
+    section{padding:66px 0;border-top:1px solid var(--line)}
+    h2{font-family:"Noto Serif TC",serif;font-size:clamp(30px,4vw,46px);margin:8px 0 16px;line-height:1.25}
+    h3{font-size:18px;margin:0 0 10px}
+    p{margin:0 0 14px}
+    .intro{max-width:760px;color:var(--muted);margin-bottom:34px}
+    .position{background:linear-gradient(135deg,var(--purple-dark),#806cae);color:white;border-radius:28px;padding:38px;box-shadow:var(--shadow)}
+    .position blockquote{font-family:"Noto Serif TC",serif;font-size:clamp(24px,3vw,36px);line-height:1.55;margin:0}
+    .position p{color:rgba(255,255,255,.76);margin:20px 0 0}
+    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:24px}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:25px;box-shadow:var(--shadow);backdrop-filter:blur(12px)}
+    .card p,.card li{font-size:14px;color:var(--muted)}
+    ul{margin:12px 0 0;padding-left:1.2em}
+    li+li{margin-top:7px}
+    .tag{display:inline-flex;border-radius:999px;background:var(--lavender);color:var(--purple-dark);padding:5px 11px;font-size:11px;font-weight:700;margin-bottom:18px}
+    .journey{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;counter-reset:step;margin-top:34px}
+    .step{position:relative;background:white;border:1px solid var(--line);border-radius:20px;padding:24px 20px;min-height:245px}
+    .step:before{counter-increment:step;content:"0" counter(step);font-family:"Cormorant Garamond",serif;font-size:35px;color:var(--purple);display:block;margin-bottom:25px}
+    .step:not(:last-child):after{content:"→";position:absolute;right:-18px;top:30px;z-index:2;width:24px;height:24px;border-radius:50%;background:var(--purple-dark);color:white;display:grid;place-items:center;font-size:13px}
+    .step h3{font-size:17px}
+    .step p{font-size:13px;color:var(--muted)}
+    .moment{margin-top:15px;padding-top:14px;border-top:1px solid var(--line);font-size:12px;color:var(--purple-dark);font-weight:600}
+    .persona{display:grid;grid-template-columns:.72fr 1.28fr;gap:18px;margin-top:30px}
+    .quote{background:var(--purple-dark);color:#fff;border-radius:24px;padding:30px;display:flex;flex-direction:column;justify-content:space-between;min-height:360px}
+    .quote .avatar{width:76px;height:76px;border-radius:24px;background:linear-gradient(145deg,var(--pink),#9f8bcc);display:grid;place-items:center;font-family:"Noto Serif TC",serif;font-size:28px}
+    .quote blockquote{font-family:"Noto Serif TC",serif;font-size:23px;line-height:1.55;margin:40px 0 0}
+    .persona-detail{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+    .fact{border-left:3px solid var(--purple);padding-left:14px;margin-top:14px}
+    .fact b{display:block;font-size:13px}.fact span{font-size:13px;color:var(--muted)}
+    .status{display:flex;gap:12px;flex-wrap:wrap;margin:24px 0}
+    .status span{padding:8px 13px;border-radius:999px;font-size:12px;background:white;border:1px solid var(--line)}
+    .status .known{background:var(--mint)}.status .assumed{background:var(--yellow)}
+    .jtbd{font-family:"Noto Serif TC",serif;font-size:clamp(22px,3vw,32px);line-height:1.6;padding:30px;border-left:4px solid var(--purple);background:white;border-radius:0 20px 20px 0;margin:28px 0}
+    .table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:20px;background:white}
+    table{border-collapse:collapse;width:100%;min-width:760px}
+    th,td{text-align:left;vertical-align:top;padding:18px;border-bottom:1px solid var(--line);font-size:13px}
+    th{color:var(--purple-dark);background:#f7f3fc;font-size:12px;letter-spacing:.04em}
+    tr:last-child td{border-bottom:0}
+    .priority{font-weight:700;color:var(--purple-dark)}
+    .metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+    .metric{background:white;border:1px solid var(--line);border-radius:18px;padding:20px}
+    .metric b{display:block;font-family:"Cormorant Garamond",serif;font-size:30px;color:var(--purple-dark)}
+    .metric span{font-size:12px;color:var(--muted)}
+    footer{padding:42px 0 64px;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
+    @media(max-width:800px){
+      .hero,.persona{grid-template-columns:1fr}.hero{padding-top:40px}.meta{border-left:0;padding-left:0}
+      .grid,.metrics{grid-template-columns:1fr 1fr}.journey{grid-template-columns:1fr 1fr}.step:not(:last-child):after{display:none}
+    }
+    @media(max-width:540px){
+      .shell{width:min(100% - 28px,1120px)}.topbar{align-items:flex-start}.topbar a{display:none}
+      section{padding:48px 0}.grid,.metrics,.journey,.persona-detail{grid-template-columns:1fr}.step{min-height:auto}.position{padding:26px}
+    }
+    @media print{body{background:white}.topbar a{display:none}.card,.position,.step,.quote{box-shadow:none;break-inside:avoid}section{padding:34px 0}}
+  </style>
+</head>
+<body>
+  <header class="shell topbar">
+    <div class="brand">深空省省</div>
+    <a href="index.html">開啟產品 ↗</a>
+  </header>
+
+  <main>
+    <div class="shell hero">
+      <div>
+        <div class="eyebrow">Product Strategy · UX Research</div>
+        <h1>把想抽的心情，<br>變成有把握的計畫。</h1>
+        <p class="lead">深空省省的產品定位、核心旅程與研究框架。這份文件記錄目前已知的使用情境，也標出下一步需要透過研究驗證的假設。</p>
+      </div>
+      <div class="meta">研究文件版本<b>v1.0 · 2026.08.06</b><br>資料基礎<b>產品功能＋創作者 User Journey</b></div>
+    </div>
+
+    <section>
+      <div class="shell">
+        <div class="section-label">01 · Positioning</div>
+        <h2>產品定位</h2>
+        <p class="intro">不是一般記帳 App，也不只是攻略資料庫；深空省省的核心價值，是把分散資訊轉換成針對玩家個人的抽卡決策。</p>
+        <div class="position">
+          <blockquote>專為《戀與深空》中小課玩家設計的抽卡資源與課金決策工具。</blockquote>
+          <p>以排期為起點、抽卡目標為核心，整合持有資源、官方贈券、禮包 CP 值與每月預算，回答「抽不抽得起、還差多少、怎麼買最省」。</p>
+        </div>
+        <div class="grid">
+          <article class="card"><span class="tag">目標使用者</span><h3>資源有限，但目標明確</h3><p>有固定推角、會提前存鑽，並願意為喜歡的卡池進行小額至中額消費的玩家。</p></article>
+          <article class="card"><span class="tag">核心需求</span><h3>降低不確定與後悔</h3><p>在密集排期與複雜禮包間，快速確認資源缺口、儲蓄時間與最低成本。</p></article>
+          <article class="card"><span class="tag">差異化</span><h3>從資料走到個人答案</h3><p>串起日曆、換算、禮包推薦和預算，而不是讓玩家自行對照多張表格。</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="shell">
+        <div class="section-label">02 · Journey</div>
+        <h2>核心 User Journey</h2>
+        <p class="intro">這條旅程來自創作者提供的實際預期使用方式。它橫跨活動前的規劃、活動當天的購買決策，以及購買後的財務紀錄。</p>
+        <div class="journey">
+          <article class="step"><h3>掌握最近排程</h3><p>獵人小姐進入產品，首先看到日曆，快速理解近期有哪些卡池與活動。</p><div class="moment">產品接觸點：排程 Tab</div></article>
+          <article class="step"><h3>計算資源缺口</h3><p>切換到換算，輸入持有鑽石、金券與目標抽數，了解還需要存多少鑽。</p><div class="moment">產品接觸點：換算 Tab</div></article>
+          <article class="step"><h3>選擇最省禮包</h3><p>活動當天再次確認缺口，查看需要買到哪一檔禮包最划算。</p><div class="moment">關鍵決策點：禮包推薦</div></article>
+          <article class="step"><h3>完成消費紀錄</h3><p>購買後到預算頁記帳，確認本月支出與剩餘可花金額。</p><div class="moment">產品接觸點：預算 Tab</div></article>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="shell">
+        <div class="section-label">03 · Proto-persona</div>
+        <h2>獵人小姐</h2>
+        <p class="intro">這是依現有 Journey 建立的 Proto-persona，不等同經過訪談驗證的 Persona。刻意不虛構年齡、職業與收入，避免過早限縮設計方向。</p>
+        <div class="status"><span class="known">綠色＝目前已知</span><span class="assumed">黃色＝待研究驗證</span></div>
+        <div class="persona">
+          <aside class="quote"><div class="avatar" aria-hidden="true">獵</div><blockquote>「我願意為喜歡的卡花錢，但想先知道要存多少、怎麼買才不會後悔。」</blockquote></aside>
+          <div class="persona-detail">
+            <article class="card"><span class="tag">已知行為</span><h3>她會做什麼</h3><ul><li>主動查看近期排期</li><li>在活動前計算存鑽缺口</li><li>活動當天比較禮包檔位</li><li>消費後記錄本月花費</li></ul></article>
+            <article class="card"><span class="tag">核心動機</span><h3>她想得到什麼</h3><ul><li>確保喜歡的卡池有足夠資源</li><li>在有限預算中取得更高價值</li><li>減少臨時課金與買錯禮包</li><li>保留下一個卡池的安全感</li></ul></article>
+            <article class="card"><span class="tag">推定痛點</span><h3>現在為何困難</h3><ul><li>排期與官方情報散落各處</li><li>贈券、返券規則增加心算負擔</li><li>禮包階級與限購組合複雜</li><li>抽卡情緒容易蓋過預算判斷</li></ul></article>
+            <article class="card"><span class="tag">待驗證假設</span><h3>我們還不知道</h3><ul><li>她多久規劃一次、何時回訪</li><li>最信任哪一種排期來源</li><li>推薦結果需要多透明才敢採用</li><li>是否願意持續手動記帳</li></ul></article>
+          </div>
+        </div>
+        <h3 style="margin-top:42px;font-size:24px">由回饋形成的三種行為型 Persona</h3>
+        <p class="intro">這不是三種固定的人。一位玩家可能在活動前是規劃者、活動當天變成精算者，抽完後又成為追蹤者。分群目的是辨認不同任務，而不是替玩家貼標籤。</p>
+        <div class="grid">
+          <article class="card">
+            <span class="tag">活動前 · 長期規劃</span>
+            <h3>存鑽規劃者</h3>
+            <p>先看未來排期，再決定目前的鑽石要留給誰。她最在意「抽完還剩多少」與下一池是否安全。</p>
+            <div class="fact"><b>主要任務</b><span>排期比較、目標抽數、預留資源、達標時間</span></div>
+            <div class="fact"><b>成功時刻</b><span>知道這一池抽完後，下一個目標仍有多少資源</span></div>
+            <div class="fact"><b>研究假設</b><span>比起最低價格，她可能更重視跨卡池的資源安全感</span></div>
+          </article>
+          <article class="card">
+            <span class="tag">活動當天 · 即時決策</span>
+            <h3>禮包精算者</h3>
+            <p>已經決定要抽，現在要用最少成本補足缺口。她需要快速、透明且能直接執行的推薦。</p>
+            <div class="fact"><b>主要任務</b><span>計算缺口、比較檔位、確認總花費、完成記帳</span></div>
+            <div class="fact"><b>成功時刻</b><span>看懂為什麼推薦這一檔，買完不必重新輸入資料</span></div>
+            <div class="fact"><b>研究假設</b><span>推薦依據的透明度會直接影響她是否採用結果</span></div>
+          </article>
+          <article class="card">
+            <span class="tag">活動後 · 結果回顧</span>
+            <h3>抽卡追蹤者</h3>
+            <p>她不只記花費，也想知道實際用了多少抽、鑽石與券，並觀察自己近期的歐非變化。</p>
+            <div class="fact"><b>主要任務</b><span>記錄實際抽數、資源組成、出金結果與卡池成本</span></div>
+            <div class="fact"><b>成功時刻</b><span>能比較不同卡池的實際結果，不必靠印象判斷</span></div>
+            <div class="fact"><b>研究假設</b><span>結果回顧可能提升長期回訪，但需要先驗證記錄負擔</span></div>
+          </article>
+        </div>
+        <div class="status"><span class="known">回饋支持：剩餘鑽、月份、日期、總花費</span><span class="assumed">下一階段驗證：實際抽數與歐非追蹤</span></div>
+      </div>
+    </section>
+
+    <section>
+      <div class="shell">
+        <div class="section-label">04 · Jobs to be Done</div>
+        <h2>使用者真正雇用它做什麼</h2>
+        <div class="jtbd">當我看到喜歡角色的卡池即將到來時，我想快速知道現有資源是否足夠，以及不足時最省的補足方式，讓我能安心做出抽卡與課金決定，又不影響下一個目標。</div>
+        <div class="grid">
+          <article class="card"><h3>功能性工作</h3><p>查排期、算資源、找禮包、記花費。</p></article>
+          <article class="card"><h3>情緒性工作</h3><p>降低錯過、抽不到與超支的不安，增加「我有準備」的掌控感。</p></article>
+          <article class="card"><h3>社會性工作</h3><p>做一個有規劃、懂得精算，而不是盲目衝動課金的玩家。</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="shell">
+        <div class="section-label">05 · Opportunities</div>
+        <h2>Journey 對產品設計的啟示</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>旅程階段</th><th>使用者問題</th><th>設計機會</th><th>優先度</th></tr></thead>
+            <tbody>
+              <tr><td>查看排程</td><td>近期有哪些池？哪些是官方、哪些是預測？</td><td>明確標示資料可信度，並允許從卡池直接開始規劃。</td><td class="priority">P0</td></tr>
+              <tr><td>計算缺口</td><td>我要存到什麼時候？下一池要留多少？</td><td>保留跨 Tab 的卡池與目標，直接呈現達標日期與安全預留。</td><td class="priority">P0</td></tr>
+              <tr><td>選擇禮包</td><td>推薦真的最省嗎？為什麼是這一檔？</td><td>顯示推薦依據、總成本、可得抽數與替代方案，建立信任。</td><td class="priority">P0</td></tr>
+              <tr><td>完成記帳</td><td>還要重新輸入剛才買的內容嗎？</td><td>在推薦結果提供「已購買並記帳」，自動帶入金額、分類與卡池。</td><td class="priority">P1</td></tr>
+              <tr><td>持續規劃</td><td>這次花費會不會影響下一池？</td><td>建立多卡池計畫，讓資源分配與預算影響可被預覽。</td><td class="priority">P1</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="shell">
+        <div class="section-label">06 · Research Plan</div>
+        <h2>下一輪 UX Research</h2>
+        <p class="intro">先用 5–7 位符合目標輪廓的玩家做半結構訪談與任務測試，目的不是證明產品好用，而是找出她們原本如何規劃，以及在哪裡失去信心。</p>
+        <div class="grid">
+          <article class="card"><span class="tag">訪談問題</span><ul><li>最近一次為卡池存鑽的過程是什麼？</li><li>你用了哪些資訊、表格或計算方式？</li><li>什麼情況會讓你臨時改變課金決定？</li><li>買完後會記錄支出嗎？為什麼？</li></ul></article>
+          <article class="card"><span class="tag">任務測試</span><ul><li>找出下一個想抽的卡池</li><li>設定 70 抽並預留下一池資源</li><li>說出還差多少鑽與最省方案</li><li>模擬購買後完成一筆記帳</li></ul></article>
+          <article class="card"><span class="tag">觀察重點</span><ul><li>是否理解預測與官方排程差異</li><li>是否信任換算及推薦結果</li><li>跨 Tab 時是否失去上下文</li><li>何處需要反覆確認或自行心算</li></ul></article>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="shell">
+        <div class="section-label">07 · Success Metrics</div>
+        <h2>驗證產品是否真的有幫助</h2>
+        <div class="metrics">
+          <div class="metric"><b>完成率</b><span>能否獨立完成「看排期 → 算缺口 → 選禮包 → 記帳」</span></div>
+          <div class="metric"><b>決策時間</b><span>從選定卡池到說出可執行方案所需時間</span></div>
+          <div class="metric"><b>信心分數</b><span>使用者對換算及禮包推薦結果的信任程度</span></div>
+          <div class="metric"><b>回訪意圖</b><span>下次活動前是否願意再次使用，以及原因</span></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer><div class="shell">深空省省 UX Research Repository · 目前內容包含創作者提供的 Journey 與由產品功能推導的研究假設；Persona 尚待真實使用者研究驗證。</div></footer>
+</body>
+</html>
