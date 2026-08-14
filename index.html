@@ -197,16 +197,9 @@
   .lead-filter-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;font-size:12px;letter-spacing:.5px}
   .lead-filter-head span:last-child{color:var(--faint);font-size:10px}
   .lead-filter-actions{display:flex;flex-wrap:wrap;gap:7px}
-  .lead-filter-btn{--lead:#fff;--lead-bg:rgba(255,255,255,.16);min-height:34px;padding:6px 10px;border-radius:99px;background:transparent;border:1px solid var(--line-soft);font-size:12px;letter-spacing:.2px;color:var(--muted);gap:6px}
+  .lead-filter-btn{min-height:34px;padding:6px 11px;border-radius:99px;background:transparent;border:1px solid var(--line-soft);font-size:12px;letter-spacing:.2px;color:var(--muted)}
   .lead-filter-btn:hover{background:rgba(255,255,255,.1)}
-  .lead-filter-btn.active{color:#fff;background:var(--lead-bg);border-color:var(--lead);box-shadow:inset 0 0 0 1px var(--lead)}
-  .lead-filter-btn.all.active{--lead:#fff;--lead-bg:rgba(255,255,255,.17)}
-  .lead-dot{width:8px;height:8px;border-radius:50%;background:var(--lead);box-shadow:0 0 0 2px rgba(255,255,255,.14)}
-  .lead-xavier{--lead:#a78bfa;--lead-bg:rgba(167,139,250,.22)}
-  .lead-zayne{--lead:#59b8ff;--lead-bg:rgba(89,184,255,.22)}
-  .lead-rafayel{--lead:#ff88bf;--lead-bg:rgba(255,136,191,.22)}
-  .lead-sylus{--lead:#ff6675;--lead-bg:rgba(255,102,117,.22)}
-  .lead-caleb{--lead:#ffad5c;--lead-bg:rgba(255,173,92,.22)}
+  .lead-filter-btn.active{color:#fff;background:rgba(255,255,255,.17);border-color:#fff;box-shadow:inset 0 0 0 1px rgba(255,255,255,.45)}
   .cal-wk{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:6px}
   .cal-wk span{text-align:center;font-size:11px;color:var(--faint);letter-spacing:1px}
   .cal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px;position:relative}
@@ -235,9 +228,7 @@
   .cal-legend{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:14px;padding-top:13px;border-top:1px solid var(--line-soft);font-size:11px;color:var(--muted)}
   .cal-legend span{display:inline-flex;align-items:center;gap:5px;letter-spacing:.3px}
   .event-name{display:flex;align-items:center;flex-wrap:wrap;gap:6px}
-  .lead-tag{--lead:#fff;--lead-bg:rgba(255,255,255,.12);display:inline-flex;align-items:center;gap:4px;border:1px solid var(--lead);border-radius:99px;padding:1px 6px;background:var(--lead-bg);font-size:10px;font-weight:500;line-height:1.5;color:#fff;white-space:nowrap}
-  .lead-tag.multi{--lead:var(--line-soft);--lead-bg:rgba(255,255,255,.08);color:var(--muted)}
-  .lead-tag .lead-dot{width:6px;height:6px;box-shadow:none}
+  .lead-tag{display:inline-flex;align-items:center;border:1px solid var(--line-soft);border-radius:99px;padding:1px 6px;background:rgba(255,255,255,.08);font-size:10px;font-weight:500;line-height:1.5;color:var(--muted);white-space:nowrap}
   .daytitle-row{display:flex;align-items:center;justify-content:space-between;gap:10px}
   .linkbtn{background:none;border:none;color:#fff;font-size:12px;min-height:0;padding:6px 4px;letter-spacing:.5px;text-decoration:underline;text-underline-offset:3px}
   .lock{display:inline-flex;align-items:center;gap:5px;font-size:10px;color:var(--faint);border:1px solid var(--line-soft);padding:3px 8px;border-radius:99px;letter-spacing:.5px}
@@ -381,11 +372,11 @@
         <div class="lead-filter-head"><span>男主篩選</span><span id="leadFilterSummary">可多選</span></div>
         <div class="lead-filter-actions" id="leadFilters">
           <button class="lead-filter-btn all" type="button" data-lead="all" aria-pressed="true" onclick="selectAllLeads()">全部</button>
-          <button class="lead-filter-btn lead-xavier" type="button" data-lead="沈星回" aria-pressed="true" onclick="toggleLead('沈星回')"><i class="lead-dot"></i>沈星回</button>
-          <button class="lead-filter-btn lead-zayne" type="button" data-lead="黎深" aria-pressed="true" onclick="toggleLead('黎深')"><i class="lead-dot"></i>黎深</button>
-          <button class="lead-filter-btn lead-rafayel" type="button" data-lead="祁煜" aria-pressed="true" onclick="toggleLead('祁煜')"><i class="lead-dot"></i>祁煜</button>
-          <button class="lead-filter-btn lead-sylus" type="button" data-lead="秦徹" aria-pressed="true" onclick="toggleLead('秦徹')"><i class="lead-dot"></i>秦徹</button>
-          <button class="lead-filter-btn lead-caleb" type="button" data-lead="夏以晝" aria-pressed="true" onclick="toggleLead('夏以晝')"><i class="lead-dot"></i>夏以晝</button>
+          <button class="lead-filter-btn" type="button" data-lead="沈星回" aria-pressed="true" onclick="toggleLead('沈星回')">沈星回</button>
+          <button class="lead-filter-btn" type="button" data-lead="黎深" aria-pressed="true" onclick="toggleLead('黎深')">黎深</button>
+          <button class="lead-filter-btn" type="button" data-lead="祁煜" aria-pressed="true" onclick="toggleLead('祁煜')">祁煜</button>
+          <button class="lead-filter-btn" type="button" data-lead="秦徹" aria-pressed="true" onclick="toggleLead('秦徹')">秦徹</button>
+          <button class="lead-filter-btn" type="button" data-lead="夏以晝" aria-pressed="true" onclick="toggleLead('夏以晝')">夏以晝</button>
         </div>
       </div>
       <div class="cal-wk"><span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span></div>
@@ -612,14 +603,7 @@ function renderBudget(){
 const SCHED=(Array.isArray(window.SCHEDULE)?window.SCHEDULE:[]);
 const META=window.SCHEDULE_META||{};
 const evLabel={banner:'卡池',merch:'周邊',daily:'日卡池',monthly:'月卡池',mixed:'混池',birthday:'生日池',rerun:'復刻池',story:'主線分線',pass:'密約',event:'其他'};
-const LEADS=[
-  {name:'沈星回',cls:'lead-xavier'},
-  {name:'黎深',cls:'lead-zayne'},
-  {name:'祁煜',cls:'lead-rafayel'},
-  {name:'秦徹',cls:'lead-sylus'},
-  {name:'夏以晝',cls:'lead-caleb'}
-];
-const leadNames=LEADS.map(l=>l.name);
+const leadNames=['沈星回','黎深','祁煜','秦徹','夏以晝'];
 const savedLeadFilter=DB.get('leadFilter',null);
 let selectedLeads=new Set(Array.isArray(savedLeadFilter)?savedLeadFilter.filter(name=>leadNames.includes(name)):leadNames);
 let calY,calM,calSel=null;
@@ -665,8 +649,8 @@ function evItemHTML(e){
   if(e.cost)sub.push('預估 '+NT(e.cost));
   const leads=Array.isArray(e.leads)?e.leads:[];
   const leadTag=leads.length===1
-    ? `<span class="lead-tag ${LEADS.find(l=>l.name===leads[0])?.cls||''}"><i class="lead-dot"></i>${esc(leads[0])}</span>`
-    : leads.length>1?`<span class="lead-tag multi">${leads.length===leadNames.length?'全員':'多人'}</span>`:'';
+    ? `<span class="lead-tag">${esc(leads[0])}</span>`
+    : leads.length>1?`<span class="lead-tag">${leads.length===leadNames.length?'全員':'多人'}</span>`:'';
   return `<div class="item">
     <span class="ico-chip ${e.type}">${svg(evIcon[e.type]||I.spark)}</span>
     <div class="grow"><div class="t event-name"><span>${esc(e.name)}</span>${leadTag}</div><div class="s">${sub.join(' · ')}</div></div>
