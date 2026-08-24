@@ -1,9 +1,6 @@
 name: Sync official schedule
 
 on:
-  schedule:
-    # GitHub Actions uses UTC. 03:35 UTC is 11:35 in Asia/Taipei.
-    - cron: "35 3 * * *"
   workflow_dispatch:
     inputs:
       dry_run:
