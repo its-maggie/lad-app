@@ -186,6 +186,39 @@
   .month-switch{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
   .month-switch .month-title{font-family:"Noto Serif TC",serif;font-size:15px;letter-spacing:1px}
 
+  /* monthly spending dashboard */
+  .dashboard-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px}
+  .dashboard-title{min-width:0}
+  .dashboard-title h2{margin-bottom:3px}
+  .dashboard-caption{font-size:11px;color:var(--muted);letter-spacing:.3px}
+  .dashboard-toggle{display:inline-flex;flex:0 0 auto;padding:2px;border:1px solid var(--line-soft);border-radius:10px;background:rgba(255,255,255,.08)}
+  .dashboard-toggle button{min-height:30px;padding:5px 9px;border:0;border-radius:7px;background:transparent;font-size:11px;letter-spacing:.3px;color:var(--muted)}
+  .dashboard-toggle button.active{background:rgba(255,255,255,.27);color:#fff;box-shadow:0 1px 5px rgba(50,30,80,.2)}
+  .dashboard-kpi{margin-bottom:10px}
+  .dashboard-kpi .b{padding:11px 5px}
+  .dashboard-kpi .b .v{font-size:clamp(16px,4.8vw,23px);white-space:nowrap}
+  .chart-shell{position:relative;min-height:234px;margin:3px -5px 0;padding:4px 0 0;border-radius:15px;background:rgba(255,255,255,.055);overflow:hidden}
+  .expense-chart{display:block;width:100%;height:auto;min-height:230px;overflow:visible}
+  .chart-grid{stroke:rgba(255,255,255,.16);stroke-width:1;stroke-dasharray:3 5}
+  .chart-baseline{stroke:rgba(255,255,255,.38);stroke-width:1}
+  .chart-bar{fill:rgba(255,255,255,.58);transition:opacity var(--t)}
+  .chart-current .chart-bar{fill:url(#barGradient)}
+  .chart-line{fill:none;stroke:#fff;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 3px 5px rgba(49,25,78,.28))}
+  .chart-area{fill:url(#areaGradient)}
+  .chart-point{fill:#d7c8ef;stroke:#fff;stroke-width:2.5}
+  .chart-current .chart-point{fill:var(--pink);stroke:#fff;stroke-width:3}
+  .chart-value{fill:#fff;font-family:"Noto Sans TC",sans-serif;font-size:10px;text-anchor:middle;text-shadow:none}
+  .chart-month{fill:rgba(255,255,255,.72);font-family:"Noto Sans TC",sans-serif;font-size:10px;text-anchor:middle;text-shadow:none}
+  .chart-current .chart-month{fill:#fff;font-weight:700}
+  .chart-hit{fill:transparent;cursor:pointer}
+  .chart-datum:focus{outline:none}
+  .chart-datum:focus .chart-hit{stroke:#fff;stroke-width:1.5;stroke-dasharray:3 2}
+  .chart-datum:hover .chart-bar{opacity:.82}
+  .chart-empty{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:80%;text-align:center;color:var(--muted);font-size:12px;pointer-events:none}
+  .dashboard-range{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:10px}
+  .dashboard-range .hint{margin:0}
+  .dashboard-range .dashboard-toggle button{min-width:48px}
+
   /* ===== calendar ===== */
   .cal-meta{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--muted);letter-spacing:1px;margin-bottom:14px}
   .cal-meta svg{width:13px;height:13px;stroke-width:1.6}
@@ -290,6 +323,9 @@
     .grid2 .field:last-child{margin-bottom:12px}
     .cal-event{padding-left:3px;padding-right:3px}
     .dialog-actions{grid-template-columns:1fr}
+    .dashboard-head{align-items:stretch;flex-direction:column}
+    .dashboard-head .dashboard-toggle{align-self:flex-start}
+    .dashboard-range{align-items:flex-start;flex-direction:column}
   }
 </style>
 </head>
@@ -329,6 +365,35 @@
           <button class="ghost block" onclick="saveBudget()">儲存設定</button>
         </div>
       </details>
+    </div>
+
+    <div class="card" aria-labelledby="expenseDashboardTitle">
+      <div class="dashboard-head">
+        <div class="dashboard-title">
+          <h2 id="expenseDashboardTitle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V9M10 19V5M16 19v-7M22 19V3"/></svg>每月花費比較</h2>
+          <div class="dashboard-caption" id="chartRangeLabel"></div>
+        </div>
+        <div class="dashboard-toggle" role="group" aria-label="圖表類型">
+          <button type="button" id="chartBarBtn" onclick="setExpenseChartType('bar')" aria-pressed="true">長條圖</button>
+          <button type="button" id="chartLineBtn" onclick="setExpenseChartType('line')" aria-pressed="false">折線圖</button>
+        </div>
+      </div>
+      <div class="kpi dashboard-kpi">
+        <div class="b"><div class="v" id="chartTotal">NT$0</div><div class="l">期間總花費</div></div>
+        <div class="b"><div class="v" id="chartAverage">NT$0</div><div class="l">每月平均</div></div>
+        <div class="b"><div class="v" id="chartHighest">NT$0</div><div class="l" id="chartHighestMonth">最高月份</div></div>
+      </div>
+      <div class="chart-shell">
+        <svg class="expense-chart" id="expenseChart" viewBox="0 0 480 240" role="img" aria-label="每月花費比較圖"></svg>
+        <div class="chart-empty" id="chartEmpty" hidden>這段期間還沒有花費紀錄</div>
+      </div>
+      <div class="dashboard-range">
+        <div class="hint">點一下月份，可查看該月明細</div>
+        <div class="dashboard-toggle" role="group" aria-label="比較期間">
+          <button type="button" id="chart6Btn" onclick="setExpenseChartMonths(6)" aria-pressed="true">近 6 月</button>
+          <button type="button" id="chart12Btn" onclick="setExpenseChartMonths(12)" aria-pressed="false">近 12 月</button>
+        </div>
+      </div>
     </div>
 
     <div class="card">
@@ -516,10 +581,99 @@ let budgetMonth=curMonth();
 const categoryMigration={'抽卡':'抽卡禮包','禮包':'抽卡禮包','月卡':'月卡/週卡'};
 let expenses=DB.get('expenses',[]).map(e=>({...e,cat:categoryMigration[e.cat]||e.cat}));
 DB.set('expenses',expenses);
+const savedChartType=DB.get('expenseChartType','bar');
+let expenseChartType=['bar','line'].includes(savedChartType)?savedChartType:'bar';
+let expenseChartMonths=Number(DB.get('expenseChartMonths',6))===12?12:6;
 function monthLabel(m){const [y,mo]=m.split('-');return `${y}年${Number(mo)}月`;}
+function shiftMonth(m,delta){
+  const [y,mo]=m.split('-').map(Number),d=new Date(y,mo-1+delta,1);
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}`;
+}
 function budgetMonthMove(delta){
-  const [y,m]=budgetMonth.split('-').map(Number),d=new Date(y,m-1+delta,1);
-  budgetMonth=`${d.getFullYear()}-${pad(d.getMonth()+1)}`;renderBudget();
+  budgetMonth=shiftMonth(budgetMonth,delta);renderBudget();
+}
+function selectBudgetMonth(month){budgetMonth=month;renderBudget();}
+function setExpenseChartType(type){
+  if(!['bar','line'].includes(type))return;
+  expenseChartType=type;DB.set('expenseChartType',type);renderExpenseDashboard();
+}
+function setExpenseChartMonths(months){
+  expenseChartMonths=Number(months)===12?12:6;DB.set('expenseChartMonths',expenseChartMonths);renderExpenseDashboard();
+}
+function shortMoney(value){
+  const n=Number(value)||0;
+  if(n>=10000){const v=(n/10000).toFixed(n>=100000?0:1).replace(/\.0$/,'');return `${v}萬`;}
+  if(n>=1000){const v=(n/1000).toFixed(n>=10000?0:1).replace(/\.0$/,'');return `${v}k`;}
+  return n.toLocaleString();
+}
+function dashboardMoney(value){
+  const n=Number(value)||0;
+  if(n>=10000){const v=(n/10000).toFixed(n>=1000000?0:1).replace(/\.0$/,'');return `NT$${v}萬`;}
+  return NT(n);
+}
+function expenseMonthsData(){
+  return Array.from({length:expenseChartMonths},(_,i)=>{
+    const month=shiftMonth(budgetMonth,i-expenseChartMonths+1);
+    const amount=expenses.filter(e=>String(e.date||'').slice(0,7)===month).reduce((sum,e)=>sum+(Number(e.amt)||0),0);
+    return{month,amount};
+  });
+}
+function renderExpenseDashboard(){
+  const data=expenseMonthsData(),total=data.reduce((sum,item)=>sum+item.amount,0),average=Math.round(total/data.length);
+  const highest=data.reduce((best,item)=>item.amount>best.amount?item:best,data[0]);
+  const totalEl=document.getElementById('chartTotal'),averageEl=document.getElementById('chartAverage'),highestEl=document.getElementById('chartHighest');
+  totalEl.textContent=dashboardMoney(total);totalEl.title=NT(total);
+  averageEl.textContent=dashboardMoney(average);averageEl.title=NT(average);
+  highestEl.textContent=dashboardMoney(highest.amount);highestEl.title=NT(highest.amount);
+  document.getElementById('chartHighestMonth').textContent=`最高 · ${Number(highest.month.slice(5))}月`;
+  document.getElementById('chartRangeLabel').textContent=`${data[0].month.replace('-', '/')} — ${data[data.length-1].month.replace('-', '/')}`;
+  ['bar','line'].forEach(type=>{
+    const btn=document.getElementById(`chart${type[0].toUpperCase()+type.slice(1)}Btn`),active=expenseChartType===type;
+    btn.classList.toggle('active',active);btn.setAttribute('aria-pressed',String(active));
+  });
+  [6,12].forEach(months=>{
+    const btn=document.getElementById(`chart${months}Btn`),active=expenseChartMonths===months;
+    btn.classList.toggle('active',active);btn.setAttribute('aria-pressed',String(active));
+  });
+
+  const width=480,plotLeft=12,plotRight=468,plotTop=34,plotBottom=190,plotHeight=plotBottom-plotTop;
+  const slot=(plotRight-plotLeft)/data.length,maxValue=Math.max(...data.map(item=>item.amount)),scaleMax=maxValue>0?maxValue*1.22:1;
+  const yFor=amount=>plotBottom-(amount/scaleMax)*plotHeight;
+  const pointFor=(item,index)=>({x:plotLeft+slot*(index+.5),y:yFor(item.amount)});
+  const defs=`<defs>
+    <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffb3df"/><stop offset="1" stop-color="#b385e0"/></linearGradient>
+    <linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffb3df" stop-opacity=".34"/><stop offset="1" stop-color="#b385e0" stop-opacity=".02"/></linearGradient>
+  </defs>`;
+  const grid=[0,.5,1].map(ratio=>`<line class="${ratio===0?'chart-baseline':'chart-grid'}" x1="${plotLeft}" y1="${plotBottom-ratio*plotHeight}" x2="${plotRight}" y2="${plotBottom-ratio*plotHeight}"/>`).join('');
+  let marks='';
+  if(expenseChartType==='bar'){
+    marks=data.map((item,index)=>{
+      const point=pointFor(item,index),barWidth=Math.min(36,slot*.58),barHeight=Math.max(item.amount>0?3:0,plotBottom-point.y),x=point.x-barWidth/2,y=plotBottom-barHeight;
+      const valueLabel=item.amount>0?shortMoney(item.amount):(data.length===6?'0':'');
+      return `<g class="chart-datum ${item.month===budgetMonth?'chart-current':''}" tabindex="0" role="button" aria-label="${monthLabel(item.month)}花費 ${NT(item.amount)}" onclick="selectBudgetMonth('${item.month}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectBudgetMonth('${item.month}')}">
+        <title>${monthLabel(item.month)} · ${NT(item.amount)}</title><rect class="chart-hit" x="${plotLeft+slot*index}" y="18" width="${slot}" height="214" rx="5"/>
+        <rect class="chart-bar" x="${x}" y="${y}" width="${barWidth}" height="${barHeight}" rx="${Math.min(8,barWidth/3)}"/>
+        ${valueLabel?`<text class="chart-value" x="${point.x}" y="${Math.max(18,y-7)}">${valueLabel}</text>`:''}
+        <text class="chart-month" x="${point.x}" y="215">${Number(item.month.slice(5))}月</text>
+      </g>`;
+    }).join('');
+  }else{
+    const points=data.map(pointFor),linePath=points.map((point,index)=>`${index?'L':'M'} ${point.x} ${point.y}`).join(' ');
+    const areaPath=`${linePath} L ${points[points.length-1].x} ${plotBottom} L ${points[0].x} ${plotBottom} Z`;
+    marks=`<path class="chart-area" d="${areaPath}"/><path class="chart-line" d="${linePath}"/>`+data.map((item,index)=>{
+      const point=points[index],valueLabel=item.amount>0?shortMoney(item.amount):(data.length===6?'0':'');
+      return `<g class="chart-datum ${item.month===budgetMonth?'chart-current':''}" tabindex="0" role="button" aria-label="${monthLabel(item.month)}花費 ${NT(item.amount)}" onclick="selectBudgetMonth('${item.month}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectBudgetMonth('${item.month}')}">
+        <title>${monthLabel(item.month)} · ${NT(item.amount)}</title><rect class="chart-hit" x="${plotLeft+slot*index}" y="18" width="${slot}" height="214" rx="5"/>
+        <circle class="chart-point" cx="${point.x}" cy="${point.y}" r="${item.month===budgetMonth?6:4.5}"/>
+        ${valueLabel?`<text class="chart-value" x="${point.x}" y="${Math.max(18,point.y-11)}">${valueLabel}</text>`:''}
+        <text class="chart-month" x="${point.x}" y="215">${Number(item.month.slice(5))}月</text>
+      </g>`;
+    }).join('');
+  }
+  const chart=document.getElementById('expenseChart');
+  chart.innerHTML=defs+grid+marks;
+  chart.setAttribute('aria-label',`${data[0].month} 到 ${data[data.length-1].month}的每月花費比較；總花費 ${NT(total)}，每月平均 ${NT(average)}`);
+  document.getElementById('chartEmpty').hidden=total>0;
 }
 function saveBudget(){
   budgets[budgetMonth]={amount:Number(document.getElementById('budgetInput').value)||0,threshold:Number(document.getElementById('thresholdInput').value)||80};
@@ -585,6 +739,7 @@ function renderBudget(){
   else if(pct>=100){al.classList.add('bad');al.innerHTML=svg(I.bad)+`已超支 ${NT(spent-b)}！本月花費 ${NT(spent)} 已超過預算。`;}
   else if(pct>=budget.threshold){al.classList.add('warn');al.innerHTML=svg(I.warn)+`快超支了！已用 ${pct}%，只剩 ${NT(remain)} 可花。`;}
   else{al.classList.add('good');al.innerHTML=svg(I.ok)+`控制得不錯，還有 ${NT(remain)}（${100-pct}%）額度。`;}
+  renderExpenseDashboard();
   const list=document.getElementById('expList');
   if(monthExp.length===0){list.innerHTML=`<div class="empty">${svg(I.inbox)}這個月還沒有花費紀錄</div>`;return;}
   list.innerHTML=monthExp.map(e=>`
