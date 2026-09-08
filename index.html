@@ -240,9 +240,12 @@
   .lead-filter-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;font-size:12px;letter-spacing:.5px}
   #leadFilterSummary{color:var(--faint);font-size:10px;margin-left:6px}
   .text-action{min-height:36px;padding:5px 8px;border:0;background:transparent;font-size:11px;letter-spacing:.2px;text-decoration:underline;text-underline-offset:3px}
-  .pack-quantity{display:flex;align-items:center;gap:10px;margin-top:9px}
-  .pack-quantity label{margin:0;white-space:nowrap}
-  .pack-quantity select{width:100px;min-height:40px;padding-top:7px;padding-bottom:7px}
+  .pack-badges{display:flex;align-items:center;flex-wrap:wrap;gap:5px;margin:4px 0;font-size:11px;color:var(--muted)}
+  .pack-badges .badge-best{margin-left:0;white-space:nowrap}
+  .pack-cumulative span{white-space:nowrap}
+  .pack-quantity{display:flex;align-items:center;gap:7px;margin-top:6px}
+  .pack-quantity label{margin:0;white-space:nowrap;font-size:11px}
+  .pack-quantity select{width:82px;min-height:36px;height:36px;padding:3px 24px 3px 9px;border-radius:9px;background-size:15px;background-position:right 7px center;line-height:1.25}
   .lead-filter-actions{display:flex;flex-wrap:wrap;gap:7px}
   .lead-filter-btn{min-height:34px;padding:6px 11px;border-radius:99px;background:transparent;border:1px solid var(--line-soft);font-size:12px;letter-spacing:.2px;color:var(--muted)}
   .lead-filter-btn:hover{background:rgba(255,255,255,.1)}
@@ -531,7 +534,7 @@
       <div class="alert good show" id="packMsg"></div>
       <div id="packTable" style="margin-top:4px"></div>
       <div class="pack-total" id="packTotal"><div class="field-head"><span class="label">已選購買禮包</span><button class="text-action" type="button" onclick="applyRecommendedPacks()">套用建議</button></div><div aria-live="polite"><div class="value" id="packTotalValue">NT$0</div><div class="note" id="packTotalNote"></div></div><button class="record-btn" id="recordPacks" type="button" onclick="prefillRecommendedExpense()">帶入錢包記帳</button></div>
-      <div class="hint">可依實際購買情況調整各階包數，記帳會帶入已選禮包的總金額。推薦方案依序購買各階禮包；手動調整後會保留選擇，按「套用建議」可重新帶入。資料由玩家依官方遊戲內容自行統整。</div>
+      <div class="hint">表內「累計」以第一階起依序買滿計算；實際選購合計顯示於上方。可依實際購買情況調整各階包數，記帳會帶入已選禮包的總金額。手動調整後會保留選擇，按「套用建議」可重新帶入。資料由玩家依官方遊戲內容自行統整。</div>
     </div>
   </section>
 </div>
@@ -1054,7 +1057,7 @@ function calcPacks(){
     msg.className='alert good show';msg.innerHTML=svg(I.spark)+'「其他」為定期禮包，無累計抽數，下表為單抽 CP 值參考。';
     table.innerHTML=arr.map(p=>`<div class="item ${p.per===best?'best':''}">
       <span class="ico-chip txt"><b>${esc(p.name).slice(0,2)}</b></span>
-      <div class="grow"><div class="t">${esc(p.name)}${p.per===best?'<span class="badge-best">單抽最低</span>':''}</div>
+      <div class="grow"><div class="t">${esc(p.name)}${p.per===best?`<span class="badge-best">單抽最低 ${NT(p.per)}／抽</span>`:''}</div>
         <div class="s">${NT(p.price)} · 單抽 ${NT(p.per)}</div></div></div>`).join('');
     return;
   }
@@ -1096,11 +1099,13 @@ function calcPacks(){
   table.innerHTML=tiers.map((t,i)=>{
     const isRec=rec&&t.tier===rec.tier;
     const isBest=t.per!=null&&t.per===bestPer;
-    const badges=(isRec?'<span class="badge-best">推薦</span>':'')+(isBest?'<span class="badge-best" style="background:#ffe08a">單抽最低</span>':'');
+    const badges=(isRec?'<span class="badge-best">推薦</span>':'')+(isBest?`<span class="badge-best" style="background:#ffe08a">單抽最低 ${NT(t.per)}／抽</span>`:t.per!=null?`<span>${NT(t.per)}／抽</span>`:'');
     return `<div class="item ${isRec?'best':''}">
       <span class="ico-chip txt"><b>${esc(t.tier)}</b></span>
-      <div class="grow"><div class="t">第 ${esc(t.tier)} 階｜${NT(t.price!=null?t.price:t.cumCost)}／包${badges}</div>
-        <div class="s">${t.packPulls!=null?`${t.packPulls} 抽／包`:''}${t.qty?`・限購 ${t.qty} 包`:''}${t.packPulls!=null?`・買滿 ${t.cumPulls} 抽＝${NT(t.cumCost)}`:`・抽數未固定・買滿 ${NT(t.cumCost)}`}</div>
+      <div class="grow"><div class="t">第 ${esc(t.tier)} 階｜${NT(t.price!=null?t.price:t.cumCost)}／包</div>
+        ${badges?`<div class="pack-badges">${badges}</div>`:''}
+        <div class="s">${t.packPulls!=null?`${t.packPulls} 抽／包`:'抽數未固定'}${t.qty?`・限購 ${t.qty} 包`:''}</div>
+        <div class="s pack-cumulative">買滿本階後，${t.packPulls!=null?`累計 ${t.cumPulls} 抽｜`:''}<span>共 ${NT(t.cumCost)}</span></div>
         <div class="pack-quantity"><label for="packQty${i}">購買包數</label><select id="packQty${i}" aria-label="第${esc(t.tier)}階購買包數" onchange="setPackQuantity(${i},this.value)">${Array.from({length:(t.qty||1)+1},(_,q)=>`<option value="${q}" ${q===selectedPackQuantities[i]?'selected':''}>${q} 包</option>`).join('')}</select></div></div></div>`;
   }).join('');
   updatePackTotal();
