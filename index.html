@@ -236,9 +236,14 @@
   .cal-title .date-unit{font-family:"Noto Serif TC",serif;font-size:18px}
   .navbtn{width:40px;height:40px;min-height:0;padding:0;border-radius:11px;background:rgba(255,255,255,.12);border:1px solid var(--line)}
   .navbtn svg{width:18px;height:18px;stroke-width:1.8}
-  .lead-filter{margin:0 0 16px;padding:13px;border:1px solid var(--line-soft);border-radius:15px;background:rgba(255,255,255,.07)}
-  .lead-filter-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;font-size:12px;letter-spacing:.5px}
-  #leadFilterSummary{color:var(--faint);font-size:10px;margin-left:6px}
+  .lead-filter{margin:0 0 10px;padding:3px 9px;border:1px solid var(--line-soft);border-radius:11px;background:rgba(255,255,255,.07)}
+  .lead-filter-head{display:flex;align-items:center;justify-content:space-between;gap:6px;font-size:12px;letter-spacing:.3px}
+  .lead-filter-toggle{flex:1;min-width:0;justify-content:flex-start;min-height:36px;padding:0;border:0;border-radius:6px;background:transparent;font-size:12px;letter-spacing:0;gap:5px}
+  .lead-filter-toggle > span:first-child{flex-shrink:0}
+  .lead-filter-toggle svg{width:13px;height:13px;flex-shrink:0;transition:transform var(--t)}
+  .lead-filter-toggle[aria-expanded="true"] svg{transform:rotate(180deg)}
+  #leadFilterSummary{color:var(--muted);font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .lead-filter-head .text-action{flex-shrink:0;padding:4px;font-size:10px}
   .text-action{min-height:36px;padding:5px 8px;border:0;background:transparent;font-size:11px;letter-spacing:.2px;text-decoration:underline;text-underline-offset:3px}
   .pack-badges{display:flex;align-items:center;flex-wrap:wrap;gap:5px;margin:4px 0;font-size:11px;color:var(--muted)}
   .pack-badges .badge-best{margin-left:0;white-space:nowrap}
@@ -246,8 +251,23 @@
   .pack-quantity{display:flex;align-items:center;gap:7px;margin-top:6px}
   .pack-quantity label{margin:0;white-space:nowrap;font-size:11px}
   .pack-quantity select{width:82px;min-height:36px;height:36px;padding:3px 24px 3px 9px;border-radius:9px;background-size:15px;background-position:right 7px center;line-height:1.25}
-  .lead-filter-actions{display:flex;flex-wrap:wrap;gap:7px}
-  .lead-filter-btn{min-height:34px;padding:6px 11px;border-radius:99px;background:transparent;border:1px solid var(--line-soft);font-size:12px;letter-spacing:.2px;color:var(--muted)}
+  .item.pack-item{display:block;padding:9px 0}
+  .item.pack-item.best{padding:9px 10px;margin:4px 0}
+  .pack-main{display:grid;grid-template-columns:minmax(0,1fr) 76px;align-items:center;gap:8px}
+  .pack-main .t{font-size:13px;line-height:1.5}
+  .pack-main .pack-badges{margin:3px 0 0;gap:4px}
+  .pack-main .badge-best{padding:1px 6px;font-size:9px}
+  .pack-main .pack-quantity{margin:0;display:flex;flex-direction:column;align-items:stretch;gap:2px}
+  .pack-main .pack-quantity label{position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+  .pack-main .pack-quantity select{width:76px}
+  .pack-details > summary{display:flex;min-height:28px;margin:2px 0 0;font-size:10px;color:var(--muted);letter-spacing:0}
+  .pack-details > summary::-webkit-details-marker{display:none}
+  .pack-details > summary svg{width:12px;height:12px}
+  .pack-details .s{font-size:11px;line-height:1.65;color:var(--muted)}
+  .pack-details[open]{padding-bottom:3px}
+  .lead-filter-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;padding:4px 0 7px}
+  .lead-filter-actions[hidden]{display:none}
+  .lead-filter-btn{min-height:32px;padding:4px 7px;border-radius:8px;background:transparent;border:1px solid var(--line-soft);font-size:11px;letter-spacing:.2px;color:var(--muted)}
   .lead-filter-btn:hover{background:rgba(255,255,255,.1)}
   .lead-filter-btn.active{color:#fff;background:rgba(255,255,255,.17);border-color:#fff;box-shadow:inset 0 0 0 1px rgba(255,255,255,.45)}
   .cal-wk{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:6px}
@@ -462,8 +482,8 @@
         <button class="navbtn" aria-label="下個月" onclick="calMove(1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
       </div>
       <div class="lead-filter" aria-label="男主篩選">
-        <div class="lead-filter-head"><div>男主篩選<span id="leadFilterSummary">可多選</span></div><button class="text-action" type="button" onclick="clearLeadFilters()">清除全部</button></div>
-        <div class="lead-filter-actions" id="leadFilters">
+        <div class="lead-filter-head"><button class="lead-filter-toggle" id="leadFilterToggle" type="button" aria-expanded="false" aria-controls="leadFilters" onclick="toggleLeadFilterPanel()"><span>男主篩選</span><span id="leadFilterSummary">全部</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button><button class="text-action" type="button" onclick="clearLeadFilters()">清除全部</button></div>
+        <div class="lead-filter-actions" id="leadFilters" hidden>
           <button class="lead-filter-btn all" type="button" data-lead="all" aria-pressed="true" onclick="selectAllLeads()">全部</button>
           <button class="lead-filter-btn" type="button" data-lead="沈星回" aria-pressed="true" onclick="toggleLead('沈星回')">沈星回</button>
           <button class="lead-filter-btn" type="button" data-lead="黎深" aria-pressed="true" onclick="toggleLead('黎深')">黎深</button>
@@ -803,7 +823,12 @@ function syncLeadFilters(){
     btn.classList.toggle('active',active);btn.setAttribute('aria-pressed',String(active));
   });
   const summary=document.getElementById('leadFilterSummary');
-  if(summary)summary.textContent=selectedLeads.size===leadNames.length?'已顯示全部':selectedLeads.size?`已選 ${selectedLeads.size} 位`:'尚未選擇';
+  if(summary)summary.textContent=selectedLeads.size===leadNames.length?'全部':selectedLeads.size===0?'尚未選擇':selectedLeads.size<=2?[...selectedLeads].join('、'):`已選 ${selectedLeads.size} 位`;
+}
+function toggleLeadFilterPanel(){
+  const panel=document.getElementById('leadFilters');
+  panel.hidden=!panel.hidden;
+  document.getElementById('leadFilterToggle').setAttribute('aria-expanded',String(!panel.hidden));
 }
 function toggleLead(name){
   if(selectedLeads.has(name))selectedLeads.delete(name);else selectedLeads.add(name);
@@ -1100,13 +1125,14 @@ function calcPacks(){
     const isRec=rec&&t.tier===rec.tier;
     const isBest=t.per!=null&&t.per===bestPer;
     const badges=(isRec?'<span class="badge-best">推薦</span>':'')+(isBest?`<span class="badge-best" style="background:#ffe08a">單抽最低 ${NT(t.per)}／抽</span>`:t.per!=null?`<span>${NT(t.per)}／抽</span>`:'');
-    return `<div class="item ${isRec?'best':''}">
-      <span class="ico-chip txt"><b>${esc(t.tier)}</b></span>
-      <div class="grow"><div class="t">第 ${esc(t.tier)} 階｜${NT(t.price!=null?t.price:t.cumCost)}／包</div>
+    return `<div class="item pack-item ${isRec?'best':''}">
+      <div class="pack-main"><div><div class="t">第 ${esc(t.tier)} 階｜${NT(t.price!=null?t.price:t.cumCost)}／包</div>
         ${badges?`<div class="pack-badges">${badges}</div>`:''}
+        </div><div class="pack-quantity"><label for="packQty${i}">購買包數</label><select id="packQty${i}" aria-label="第${esc(t.tier)}階購買包數" onchange="setPackQuantity(${i},this.value)">${Array.from({length:(t.qty||1)+1},(_,q)=>`<option value="${q}" ${q===selectedPackQuantities[i]?'selected':''}>${q} 包</option>`).join('')}</select></div></div>
+        <details class="pack-details"><summary aria-label="第${esc(t.tier)}階禮包明細"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>禮包明細</summary>
         <div class="s">${t.packPulls!=null?`${t.packPulls} 抽／包`:'抽數未固定'}${t.qty?`・限購 ${t.qty} 包`:''}</div>
         <div class="s pack-cumulative">買滿本階後，${t.packPulls!=null?`累計 ${t.cumPulls} 抽｜`:''}<span>共 ${NT(t.cumCost)}</span></div>
-        <div class="pack-quantity"><label for="packQty${i}">購買包數</label><select id="packQty${i}" aria-label="第${esc(t.tier)}階購買包數" onchange="setPackQuantity(${i},this.value)">${Array.from({length:(t.qty||1)+1},(_,q)=>`<option value="${q}" ${q===selectedPackQuantities[i]?'selected':''}>${q} 包</option>`).join('')}</select></div></div></div>`;
+        </details></div>`;
   }).join('');
   updatePackTotal();
 }
