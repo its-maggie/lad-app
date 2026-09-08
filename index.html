@@ -95,7 +95,13 @@
     color:#fff;font-size:16px;font-family:inherit;outline:none;
     transition:border-color var(--t),box-shadow var(--t),background var(--t);
   }
-  input[type="date"]{min-width:0;max-width:100%}
+  /* iOS date controls miscalculate 100% width with padding (WebKit #301648).
+     Keep padding and the border on a separate container. */
+  .date-control{width:100%;min-width:0;min-height:46px;padding:0 13px;border:1px solid var(--line);border-radius:13px;background:rgba(255,255,255,.14);transition:border-color var(--t),box-shadow var(--t),background var(--t)}
+  .date-control:focus-within{border-color:#fff;box-shadow:var(--ring);background:rgba(255,255,255,.2)}
+  .date-control input[type="date"]{display:block;appearance:none;-webkit-appearance:none;box-sizing:border-box;width:100%;min-width:0;max-width:100%;min-height:44px;height:44px;margin:0;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none;line-height:44px;text-align:left}
+  .date-control input[type="date"]::-webkit-date-and-time-value{min-height:44px;text-align:left}
+  .date-control input[type="date"]::-webkit-datetime-edit{padding:0}
   input::placeholder{color:rgba(255,255,255,.6)}
   select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' fill='none' stroke='%23ffffff' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:38px}
   input:focus,select:focus{border-color:#fff;box-shadow:var(--ring);background:rgba(255,255,255,.2)}
@@ -420,7 +426,7 @@
           </select>
         </div>
       </div>
-      <div class="field"><label for="expDate">消費日期</label><input type="date" id="expDate"></div>
+      <div class="field"><label for="expDate">消費日期</label><div class="date-control"><input type="date" id="expDate"></div></div>
       <div class="field"><label for="expNote">備註（選填）</label><input type="text" id="expNote" placeholder="例如：沈星回限定卡池"></div>
       <button class="block" onclick="addExpense()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>新增花費</button>
     </div>
@@ -570,7 +576,7 @@
       <div class="field"><label for="editExpAmt">金額（NT$）</label><input type="number" id="editExpAmt" inputmode="numeric"></div>
       <div class="field"><label for="editExpCat">類別</label><select id="editExpCat"><option value="抽卡禮包">抽卡禮包</option><option value="月卡/週卡">月卡 / 週卡</option><option value="密約">密約</option><option value="周邊">周邊</option><option value="其他">其他</option></select></div>
     </div>
-    <div class="field"><label for="editExpDate">消費日期</label><input type="date" id="editExpDate"></div>
+    <div class="field"><label for="editExpDate">消費日期</label><div class="date-control"><input type="date" id="editExpDate"></div></div>
     <div class="field"><label for="editExpNote">備註（選填）</label><input type="text" id="editExpNote"></div>
     <button class="block" type="button" onclick="saveExpenseEdit()">儲存修改</button>
     <div class="dialog-actions"><button class="ghost" type="button" onclick="closeExpenseEditor()">取消</button><button class="dialog-danger" type="button" onclick="deleteEditingExpense()">刪除這筆</button></div>
