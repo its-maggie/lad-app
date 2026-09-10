@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@500;600;700&display=swap" rel="stylesheet">
-<script src="schedule.js?v=20260908"></script>
+<script src="schedule.js?v=20260910"></script>
 <script src="packs.js"></script>
 <style>
   :root{
@@ -871,6 +871,7 @@ function evItemHTML(e){
   const info=evInfo(e);
   const range=e.start?(e.end&&e.end!==e.start?`${e.start} ~ ${e.end}`:e.start):'日期未定';
   const sub=[evLabel[e.type]||'活動',range];
+  if(e.tentative)sub.push('預測');
   if(e.cost)sub.push('預估 '+NT(e.cost));
   const leads=Array.isArray(e.leads)?e.leads:[];
   const leadTag=leads.length===1
