@@ -221,7 +221,8 @@
   .dashboard-toggle button.active{background:rgba(255,255,255,.27);color:#fff;box-shadow:0 1px 5px rgba(50,30,80,.2)}
   .dashboard-range-options{flex-wrap:wrap;justify-content:flex-end}
   .custom-range{margin-bottom:12px;padding:10px;border:1px solid var(--line-soft);border-radius:14px;background:rgba(255,255,255,.07)}
-  .custom-range .grid2{margin-bottom:0}
+  .custom-range .grid2{margin-bottom:0;min-width:0;gap:8px}
+  .custom-range input[type="month"]{min-width:0;max-width:100%;width:100%}
   .custom-range .field{margin-bottom:10px}
   .custom-range-error{min-height:18px;margin-top:7px;color:var(--bad)}
   .dashboard-kpi{margin-bottom:10px}
@@ -365,6 +366,7 @@
     .card{background:rgba(50,37,87,.48)}
     .wrap{padding-left:12px;padding-right:12px}
     .card{padding:16px}
+    .custom-range .grid2{grid-template-columns:1fr}
     .item{align-items:flex-start;flex-wrap:wrap;gap:9px 10px}
     .item .grow{flex:1 1 calc(100% - 50px)}
     .item .amt{margin-left:48px;font-size:19px}
@@ -622,7 +624,7 @@
 
 <dialog class="feedback-dialog" id="feedbackPrompt" aria-labelledby="feedbackPromptTitle">
   <div class="dialog-head"><h2 id="feedbackPromptTitle">前往使用回饋問卷？</h2><button class="iconbtn" type="button" aria-label="關閉" onclick="closeFeedbackPrompt()">×</button></div>
-  <p>問卷約需 3 分鐘，不會收集姓名或 Email。你的回覆會用來改善深空省省，也可能以匿名彙整方式用於 UX 研究。</p>
+  <p>問卷約需 3 分鐘，不會收集姓名或 Email。你的回覆會幫助我們了解使用需求與卡住的地方，作為後續改善的參考。</p>
   <div class="dialog-actions"><button class="ghost" type="button" onclick="closeFeedbackPrompt()">先不要</button><button type="button" onclick="goToFeedback()">前往問卷</button></div>
 </dialog>
 
