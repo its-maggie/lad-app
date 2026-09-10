@@ -212,7 +212,7 @@
   .dashboard-summary-sub{display:block;margin-top:2px;font-size:11px;color:var(--muted);letter-spacing:.2px}
   .dashboard-chevron{width:17px;height:17px;flex:0 0 auto;transition:transform var(--t)}
   .dashboard-card[open] .dashboard-chevron{transform:rotate(180deg)}
-  .dashboard-content{padding:16px 18px 18px;border-top:1px solid var(--line-soft)}
+  .dashboard-content{padding:13px 14px 15px;border-top:1px solid var(--line-soft)}
   .dashboard-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
   .dashboard-title{min-width:0}
   .dashboard-caption{font-size:11px;color:var(--muted);letter-spacing:.3px}
@@ -220,7 +220,7 @@
   .dashboard-toggle button{min-height:30px;padding:5px 9px;border:0;border-radius:7px;background:transparent;font-size:11px;letter-spacing:.3px;color:var(--muted)}
   .dashboard-toggle button.active{background:rgba(255,255,255,.27);color:#fff;box-shadow:0 1px 5px rgba(50,30,80,.2)}
   .dashboard-range-options{flex-wrap:wrap;justify-content:flex-end}
-  .custom-range{margin-bottom:14px;padding:13px;border:1px solid var(--line-soft);border-radius:14px;background:rgba(255,255,255,.07)}
+  .custom-range{margin-bottom:12px;padding:10px;border:1px solid var(--line-soft);border-radius:14px;background:rgba(255,255,255,.07)}
   .custom-range .grid2{margin-bottom:0}
   .custom-range .field{margin-bottom:10px}
   .custom-range-error{min-height:18px;margin-top:7px;color:var(--bad)}
@@ -338,6 +338,10 @@
   nav button svg,nav .feedback-link svg{width:22px;height:22px;stroke-width:1.4;transition:transform var(--t)}
   nav button.active{color:#fff}
   nav button.active svg{transform:translateY(-1px)}
+  .feedback-dialog{width:min(370px,calc(100% - 28px));padding:22px}
+  .feedback-dialog h2{margin:0;font-size:18px}
+  .feedback-dialog p{margin:10px 0 18px;color:var(--muted);font-size:13px;line-height:1.65}
+  .feedback-dialog .dialog-actions{margin-top:0}
 
   .tabview{display:none;animation:fade .35s var(--t)}
   .tabview.active{display:block}
@@ -379,6 +383,11 @@
     .dialog-actions{grid-template-columns:1fr}
     .dashboard-head{align-items:flex-start;flex-direction:column}
     .dashboard-head .dashboard-toggle{align-self:stretch;justify-content:center}
+  }
+  @media (max-width:480px){
+    .dashboard-content{padding-left:10px;padding-right:10px}
+    .dashboard-head{gap:9px}
+    .custom-range .grid2{grid-template-columns:1fr}
   }
 </style>
 </head>
@@ -606,9 +615,16 @@
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>排期</button>
   <button data-tab="calc" aria-label="換算" onclick="showTab('calc',this)">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12l4 6-10 12L2 9z"/><path d="M2 9h20"/></svg>換算</button>
-  <a class="feedback-link" href="https://docs.google.com/forms/d/e/1FAIpQLSfyHTsrjN9MY36J2Fw8X3JaRB0ecuRKOuozsbm-BE9NdUAjfA/viewform?usp=header" target="_blank" rel="noopener noreferrer" aria-label="填寫使用回饋問卷（約 3 分鐘，另開分頁）" title="約 3 分鐘，不需提供姓名或 Email">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7A8.4 8.4 0 0 1 4 11.5a8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/><path d="M8 10h9M8 14h5"/></svg>回饋</a>
+  <button class="feedback-link" type="button" onclick="openFeedbackPrompt()" aria-label="開啟使用回饋問卷確認視窗" title="約 3 分鐘，不需提供姓名或 Email">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7A8.4 8.4 0 0 1 4 11.5a8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/><path d="M8 10h9M8 14h5"/></svg>回饋
+  </button>
 </nav>
+
+<dialog class="feedback-dialog" id="feedbackPrompt" aria-labelledby="feedbackPromptTitle">
+  <div class="dialog-head"><h2 id="feedbackPromptTitle">前往使用回饋問卷？</h2><button class="iconbtn" type="button" aria-label="關閉" onclick="closeFeedbackPrompt()">×</button></div>
+  <p>問卷約需 3 分鐘，不會收集姓名或 Email。你的回覆會用來改善深空省省，也可能以匿名彙整方式用於 UX 研究。</p>
+  <div class="dialog-actions"><button class="ghost" type="button" onclick="closeFeedbackPrompt()">先不要</button><button type="button" onclick="goToFeedback()">前往問卷</button></div>
+</dialog>
 
 <script>
 /* ---------- icon set (thin white line SVG) ---------- */
@@ -647,6 +663,16 @@ function showTab(t,btn){
   btn.classList.add('active');
   window.scrollTo({top:0});
 }
+const FEEDBACK_URL='https://docs.google.com/forms/d/e/1FAIpQLSfyHTsrjN9MY36J2Fw8X3JaRB0ecuRKOuozsbm-BE9NdUAjfA/viewform?usp=header';
+function openFeedbackPrompt(){
+  const dialog=document.getElementById('feedbackPrompt');
+  if(dialog.showModal)dialog.showModal();else dialog.setAttribute('open','');
+}
+function closeFeedbackPrompt(){
+  const dialog=document.getElementById('feedbackPrompt');
+  if(dialog.open&&dialog.close)dialog.close();else dialog.removeAttribute('open');
+}
+function goToFeedback(){closeFeedbackPrompt();window.open(FEEDBACK_URL,'_blank','noopener,noreferrer');}
 
 /* ================= BUDGET (player-editable) ================= */
 const legacyBudget=DB.get('budget',{amount:0,threshold:80});
