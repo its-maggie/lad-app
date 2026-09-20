@@ -13,7 +13,7 @@ window.PACK_POOLS  = ["日卡池","混池","月卡池","生日池","復刻池","
 // 官方免費金券：initial 為免費贈送；milestones 為完成該累抽數後返還的張數。
 window.OFFICIAL_TICKET_RULES = {
   "日卡池": {initial:10,milestones:[{every:10,reward:1,maxReward:10}]},
-  "混池": {initial:10,initialNote:"需完成活動",maxReturn:20,milestones:[
+  "混池": {initial:10,milestones:[
     {at:50,reward:5},{at:100,reward:5},{at:150,reward:5},{at:250,reward:5}
   ]},
   "月卡池": {initial:0,milestones:[
