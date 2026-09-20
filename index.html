@@ -1024,7 +1024,7 @@ function officialTicketCount(pool,target){
   let count=Number(rule.initial)||0;
   (rule.milestones||[]).forEach(m=>{
     // 達成「目標抽數」當下才領到的券，不能回頭折抵同一個目標。
-    if(m.at!=null){if(m.at<target)count+=Number(m.reward)||0;return;}
+    if(m.at!=null){if(m.at<target)count+=Math.min(Number(m.reward)||0,target-Number(m.at));return;}
     const from=Number(m.from)||Number(m.every)||0;
     const to=Number(m.to)||Infinity;
     let earned=0;
@@ -1047,11 +1047,15 @@ function calc(){
     ? `為後續密集排期先存 · 相當於 ${fmtPulls(reserve)} 抽`
     : `為後續密集排期先存 · 相當於 ${reserveData.dia.toLocaleString()} 鑽`;
   const selectedPool=document.getElementById('poolSel').value;
+  const ticketRule=(window.OFFICIAL_TICKET_RULES||{})[selectedPool]||{};
   // 累抽返還只依「這次預計實抽」計算；預留抽數尚未抽出，不會觸發返券。
   const gifts=officialTicketCount(selectedPool,pulls);
   const initialTickets=Number(((window.OFFICIAL_TICKET_RULES||{})[selectedPool]||{}).initial)||0;
   document.getElementById('officialTickets').value=gifts;
-  document.getElementById('officialTicketNote').textContent=`開池贈送 ${initialTickets} 張 · 目標內可用的累抽返還 ${Math.max(0,gifts-initialTickets)} 張`;
+  const usableReturns=Math.max(0,gifts-initialTickets);
+  const maxReturns=Number(ticketRule.maxReturn)||0;
+  const initialNote=ticketRule.initialNote?`（${ticketRule.initialNote}）`:'';
+  document.getElementById('officialTicketNote').textContent=`免費贈送 ${initialTickets} 張${initialNote} · 目標前可折抵累抽返還 ${usableReturns} 張${maxReturns?`（本池上限 ${maxReturns} 張）`:''}`;
   const ticketPulls=Math.max(0,tickets)+Math.max(0,gifts);
   const need=Math.max(0,total-ticketPulls)*per,gap=Math.max(0,need-cur),can=(per>0?Math.floor(cur/per):0)+ticketPulls;
   const remainAfterGoal=Math.max(0,cur-Math.max(0,pulls-ticketPulls)*per);

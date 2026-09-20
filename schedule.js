@@ -3,13 +3,14 @@
    預測來源：0910排期預測更新.JPG（右側第 2 版）。
    秦徹猩紅復刻以官方 9/8–9/15 為準，不採用圖中的 9/10–9/16。
    夏以晝主線已確認為 9/17–9/27。
+   混池「如若午夜無眠」已確認為 9/22–10/10。
    保留既有八月活動；九月起未公告排期改依本版，不沿用舊版推測。
    密約只提供可能開啟日，結束日與角色尚未確認。
    注意：tentative 為 true 的項目屬預測資料，日期及內容皆可能變動。
    ============================================================= */
 
 window.SCHEDULE_META = {
-  updated: "2026-09-15",
+  updated: "2026-09-20",
   label: "排期整理",
   forecastSource: "0910排期預測更新.JPG（右側第 2 版）"
 };
@@ -23,7 +24,7 @@ window.SCHEDULE = [
   { name: "密約・秦徹／祁煜",           type: "pass",    start: "2026-08-24", end: "2026-10-21", tentative: false, leads: ["秦徹", "祁煜"] },
   { name: "秦徹猩紅日卡2.0復刻",         type: "rerun",   start: "2026-09-08", end: "2026-09-15", tentative: false, source: "https://www.facebook.com/loveanddeepspace.tw/videos/1651548833246382/", leads: ["秦徹"] },
   { name: "夏以晝主線",                 type: "story",   start: "2026-09-17", end: "2026-09-27", tentative: false, leads: ["夏以晝"] },
-  { name: "新混池5",                    type: "mixed",   start: "2026-09-19", end: "2026-10-04", tentative: true,  leads: ["沈星回", "黎深", "祁煜", "秦徹", "夏以晝"] },
+  { name: "如若午夜無眠",               type: "mixed",   start: "2026-09-22", end: "2026-10-10", tentative: false, source: "https://www.taptap.cn/moment/850722755258091513?group_id=278979", leads: ["沈星回", "黎深", "祁煜", "秦徹", "夏以晝"] },
   { name: "祁煜長思入畫復刻",           type: "rerun",   start: "2026-09-27", end: "2026-10-04", tentative: true,  leads: ["祁煜"] },
   { name: "半透明侵占復刻",             type: "rerun",   start: "2026-10-04", end: "2026-10-11", tentative: true,  leads: ["沈星回", "黎深", "祁煜", "秦徹"] },
   { name: "沈星回生日＋生日復刻",       type: "birthday",start: "2026-10-11", end: "2026-10-18", tentative: true,  leads: ["沈星回"] },
