@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@500;600;700&display=swap" rel="stylesheet">
-<script src="schedule.js?v=20260910"></script>
+<script src="schedule.js?v=20260921"></script>
 <script src="packs.js"></script>
 <style>
   :root{
@@ -893,6 +893,9 @@ function toggleLead(name){
 function selectAllLeads(){selectedLeads=new Set(leadNames);DB.set('leadFilter',leadNames);calSel=null;renderCal();}
 function clearLeadFilters(){selectedLeads=new Set();DB.set('leadFilter',[]);calSel=null;renderCal();}
 function dayDiff(d){return Math.ceil((new Date(d+'T00:00:00')-new Date(todayStr()+'T00:00:00'))/86400000);}
+// 已結束的排期日期不會再變動，即使原本是預測也一律當成已確認（實線）。
+function evEnded(e){const end=e.end||e.start;return !!end&&end<todayStr();}
+function isForecast(e){return !!e.tentative&&!evEnded(e);}
 function evInfo(e){
   if(!e.start)return{pill:e.tentative?'情報':'日期待定',cls:'tbd'};
   const dS=dayDiff(e.start),dE=dayDiff(e.end||e.start);
@@ -916,7 +919,7 @@ function evItemHTML(e){
   const info=evInfo(e);
   const range=e.start?(e.end&&e.end!==e.start?`${e.start} ~ ${e.end}`:e.start):'日期未定';
   const sub=[evLabel[e.type]||'活動',range];
-  if(e.tentative)sub.push('預測');
+  if(isForecast(e))sub.push('預測');
   if(e.cost)sub.push('預估 '+NT(e.cost));
   const leads=Array.isArray(e.leads)?e.leads:[];
   const leadTag=leads.length===1
@@ -963,7 +966,7 @@ function renderCal(){
       const lane=laneEnds.findIndex(last=>startCol>last);if(lane<0)return;
       laneEnds[lane]=endCol;
       const row=week*4+2+lane;
-      bars+=`<span class="cal-event t-${v.e.type} ${v.e.tentative?'tentative':''}" style="grid-column:${startCol} / ${endCol+1};grid-row:${row}" title="${esc(v.e.name)}">${esc(v.e.name)}</span>`;
+      bars+=`<span class="cal-event t-${v.e.type} ${isForecast(v.e)?'tentative':''}" style="grid-column:${startCol} / ${endCol+1};grid-row:${row}" title="${esc(v.e.name)}">${esc(v.e.name)}</span>`;
     });
   }
   const grid=document.getElementById('calGrid');
