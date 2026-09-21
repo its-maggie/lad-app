@@ -1,0 +1,35 @@
+name: Deploy to Vercel
+
+# 這個專案沒有接 Vercel 的 Git 整合（Vercel GitHub App 目前拿不到 its-maggie
+# 這個 namespace），所以 push 不會自動部署。改由 CI 用既有的 VERCEL_TOKEN
+# 部署，行為與 sync-official-schedule.yml 的部署步驟一致。
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      VERCEL_ORG_ID: ${{ vars.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ vars.VERCEL_PROJECT_ID }}
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Pull Vercel production settings
+        run: npx --yes vercel@59.5.0 pull --yes --environment=production --token="$VERCEL_TOKEN"
+
+      - name: Build for Vercel
+        run: npx --yes vercel@59.5.0 build --prod --token="$VERCEL_TOKEN"
+
+      - name: Deploy to Vercel Production
+        run: npx --yes vercel@59.5.0 deploy --prebuilt --prod --token="$VERCEL_TOKEN"
