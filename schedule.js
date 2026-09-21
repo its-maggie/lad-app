@@ -4,13 +4,14 @@
    秦徹猩紅復刻以官方 9/8–9/15 為準，不採用圖中的 9/10–9/16。
    夏以晝主線已確認為 9/17–9/27。
    混池「如若午夜無眠」已確認為 9/22–10/10。
+   祁煜「破陣子」日卡官方為 8/17–8/31 上午 4:59，修正舊版 8/14–8/28 的預測值。
    保留既有八月活動；九月起未公告排期改依本版，不沿用舊版推測。
    密約只提供可能開啟日，結束日與角色尚未確認。
    注意：tentative 為 true 的項目屬預測資料，日期及內容皆可能變動。
    ============================================================= */
 
 window.SCHEDULE_META = {
-  updated: "2026-09-20",
+  updated: "2026-09-21",
   label: "排期整理",
   forecastSource: "0910排期預測更新.JPG（右側第 2 版）"
 };
@@ -18,9 +19,9 @@ window.SCHEDULE_META = {
 window.SCHEDULE = [
   { name: "夏以晝月卡",                 type: "monthly", start: "2026-08-05", end: "2026-08-14", tentative: false, leads: ["夏以晝"] },
   { name: "花承春意、甜夢清歡周邊",     type: "merch",   start: "2026-08-10", end: "2026-08-20", tentative: false, leads: ["沈星回", "黎深", "祁煜", "秦徹", "夏以晝"] },
-  { name: "祁煜日卡",                   type: "daily",   start: "2026-08-14", end: "2026-08-28", tentative: true,  leads: ["祁煜"] },
+  { name: "祁煜日卡",                   type: "daily",   start: "2026-08-17", end: "2026-08-31", tentative: false, source: "https://www.threads.com/@love_deepspace_tw/post/DcAXrYgmTFP/", leads: ["祁煜"] },
   { name: "秦徹不設防禁區復刻",         type: "rerun",   start: "2026-08-24", end: "2026-08-31", tentative: false, leads: ["秦徹"] },
-  { name: "黎深生日＋生日復刻",         type: "birthday",start: "2026-08-31", end: "2026-09-07", tentative: true,  leads: ["黎深"] },
+  { name: "黎深生日＋生日復刻",         type: "birthday",start: "2026-08-31", end: "2026-09-07", tentative: false, leads: ["黎深"] },
   { name: "密約・秦徹／祁煜",           type: "pass",    start: "2026-08-24", end: "2026-10-21", tentative: false, leads: ["秦徹", "祁煜"] },
   { name: "秦徹猩紅日卡2.0復刻",         type: "rerun",   start: "2026-09-08", end: "2026-09-15", tentative: false, source: "https://www.facebook.com/loveanddeepspace.tw/videos/1651548833246382/", leads: ["秦徹"] },
   { name: "夏以晝主線",                 type: "story",   start: "2026-09-17", end: "2026-09-27", tentative: false, leads: ["夏以晝"] },
