@@ -1,6 +1,6 @@
 # 官方排程自動更新
 
-此專案每天在台北時間 11:35 檢查《戀與深空》台港澳官方 Facebook 粉絲專頁。
+此專案可由 GitHub Actions 手動檢查《戀與深空》台港澳官方 Facebook 粉絲專頁；目前未啟用定時檢查。
 
 ## 安全規則
 
@@ -12,7 +12,7 @@
 
 ## 執行時間
 
-GitHub Actions cron 使用 UTC，因此排程設定為 `35 3 * * *`，即全年固定的台北時間 11:35。
+目前僅提供 `workflow_dispatch` 手動執行。成功更新排期時會一併新增全站公告，詳見 [最近更新維護方式](site-updates.md)。
 
 ## 必要設定
 
@@ -26,7 +26,7 @@ GitHub repository variables：
 - `VERCEL_ORG_ID`
 - `VERCEL_PROJECT_ID`
 
-GitHub Actions 內建的 `GITHUB_TOKEN` 用來提交 `schedule.js` 及建立待確認 Issue，不需另建 Personal Access Token。
+GitHub Actions 內建的 `GITHUB_TOKEN` 用來提交 `schedule.js`、`updates.js` 及建立待確認 Issue，不需另建 Personal Access Token。
 
 ## 手動測試
 

@@ -4,6 +4,7 @@ import fs from "node:fs";
 import path from "node:path";
 import vm from "node:vm";
 import { pathToFileURL } from "node:url";
+import { recordScheduleUpdate } from "./site-updates.mjs";
 
 const LEADS = ["沈星回", "黎深", "祁煜", "秦徹", "夏以晝"];
 const TYPE_RULES = [
@@ -325,7 +326,10 @@ export async function runSync({ scheduleFile, now = new Date(), dryRun = false }
   }
 
   if (changes.length) source = updateMetaDate(source, taipeiDate(now));
-  if (changes.length && !dryRun) fs.writeFileSync(file, source);
+  if (changes.length && !dryRun) {
+    recordScheduleUpdate(path.join(path.dirname(file), "updates.js"), changes, taipeiDate(now));
+    fs.writeFileSync(file, source);
+  }
   await createReviewIssues(reviews);
   appendSummary(changes, reviews, posts.length);
   return { posts: posts.length, changes, reviews };

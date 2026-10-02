@@ -25,6 +25,14 @@ jobs:
       - name: Check out
         uses: actions/checkout@v4
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Test schedule and update notices
+        run: node --test scripts/*.test.mjs
+
       - name: Pull Vercel production settings
         run: npx --yes vercel@59.5.0 pull --yes --environment=production --token="$VERCEL_TOKEN"
 

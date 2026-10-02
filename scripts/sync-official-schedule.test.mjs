@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import vm from "node:vm";
 import test from "node:test";
 
 import { classifyPost, extractDateRanges, matchScheduleEvent, runSync } from "./sync-official-schedule.mjs";
@@ -77,6 +78,10 @@ test("updates schedule.js end to end from a Facebook fixture", async () => {
   const previousFixture = process.env.META_POSTS_FILE;
   process.env.META_POSTS_FILE = postsFile;
   try {
+    const before = fs.readFileSync(scheduleFile, "utf8");
+    await runSync({ scheduleFile, now: new Date("2026-08-24T03:35:00Z"), dryRun: true });
+    assert.equal(fs.readFileSync(scheduleFile, "utf8"), before);
+    assert.equal(fs.existsSync(path.join(directory, "updates.js")), false);
     const result = await runSync({ scheduleFile, now: new Date("2026-08-24T03:35:00Z") });
     assert.equal(result.changes.length, 1);
     const updated = fs.readFileSync(scheduleFile, "utf8");
@@ -85,6 +90,17 @@ test("updates schedule.js end to end from a Facebook fixture", async () => {
     assert.match(updated, /end: "2026-08-31"/);
     assert.match(updated, /tentative: false/);
     assert.match(updated, /source: "https:\/\/www\.facebook\.com\/loveanddeepspace\.tw\/posts\/123"/);
+    const updatesFile = path.join(directory, "updates.js");
+    const notice = fs.readFileSync(updatesFile, "utf8");
+    const context = { window: {} };
+    vm.runInNewContext(notice, context);
+    assert.equal(context.window.SITE_UPDATES.length, 1);
+    assert.equal(context.window.SITE_UPDATES[0].date, "2026-08-24");
+    assert.equal(context.window.SITE_UPDATES[0].items[0].type, "schedule");
+    assert.match(context.window.SITE_UPDATES[0].items[0].body, /2026\/08\/24–2026\/08\/31/);
+    const repeated = await runSync({ scheduleFile, now: new Date("2026-08-24T04:00:00Z") });
+    assert.equal(repeated.changes.length, 0);
+    assert.equal(fs.readFileSync(updatesFile, "utf8"), notice);
   } finally {
     if (previousFixture === undefined) delete process.env.META_POSTS_FILE;
     else process.env.META_POSTS_FILE = previousFixture;
