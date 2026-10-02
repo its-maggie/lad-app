@@ -9,8 +9,8 @@ export function recordScheduleUpdate(file, changes, date) {
   if (!Array.isArray(releases)) throw new Error("updates.js 公告格式不正確");
   const fingerprint = createHash("sha256").update(JSON.stringify(changes)).digest("hex").slice(0, 12);
   const id = `schedule-${date}-${fingerprint}`;
-  if (releases.some(release => release.id === id)) return;
-  releases.unshift({
+  if (releases.length === 1 && releases[0].id === id) return;
+  const latest = {
     id,
     date,
     items: changes.map(change => ({
@@ -18,6 +18,6 @@ export function recordScheduleUpdate(file, changes, date) {
       title: `${change.name}｜排期已確認`,
       body: `已依官方公告更新為 ${change.start.replaceAll("-", "/")}–${change.end.replaceAll("-", "/")}，月曆已同步更新。`,
     })),
-  });
-  fs.writeFileSync(file, `// 最新一則放最前面；每次發布使用新的 id。\nwindow.SITE_UPDATES = ${JSON.stringify(releases, null, 2)};\n`);
+  };
+  fs.writeFileSync(file, `// 只保留最近一次公告；功能消息需由使用者明確要求才發布。\nwindow.SITE_UPDATES = ${JSON.stringify([latest], null, 2)};\n`);
 }

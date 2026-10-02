@@ -14,7 +14,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@500;600;700&display=swap" rel="stylesheet">
 <script src="schedule.js?v=20261002-2"></script>
 <script src="updates.js"></script>
-<script src="site-updates.js?v=20261002-2" defer></script>
+<script src="site-updates.js?v=20261002-3" defer></script>
 <script src="packs.js"></script>
 <style>
   :root{
@@ -133,7 +133,7 @@
   .updates-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:18px 20px 14px;border-bottom:1px solid var(--line-soft);flex:0 0 auto}
   .updates-heading{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
   .updates-dialog h2{font-family:inherit;font-size:1.125rem;font-weight:700;letter-spacing:0;margin:0}
-  .updates-date,.update-release time{font-size:.875rem;color:var(--muted)}
+  .updates-date{font-size:.875rem;color:var(--muted)}
   .updates-unread,.update-kind{font-size:.875rem;letter-spacing:0;border:1px solid var(--line-soft);border-radius:6px;padding:1px 7px}
   .updates-unread{color:#fff;background:rgba(255,179,223,.15);border-color:var(--pink)}
   .updates-close{width:44px;min-height:44px;flex:0 0 44px;padding:10px;border-color:var(--line-soft);background:transparent}
@@ -142,11 +142,6 @@
   .update-kind{display:inline-block;color:var(--good);margin-bottom:6px}
   .update-release h3{font-size:1rem;font-weight:500;line-height:1.6;margin:0;overflow-wrap:anywhere}
   .update-release p{font-size:1rem;color:var(--muted);margin:5px 0 0;line-height:1.7;overflow-wrap:anywhere}
-  .updates-history{border-top:1px solid var(--line-soft);margin-top:16px}
-  .updates-history summary{font-size:.875rem;min-height:44px;margin-top:4px;list-style:disclosure-closed;display:list-item}
-  .updates-history[open] summary{list-style:disclosure-open}
-  .updates-history .update-release{margin-top:16px}
-  .updates-history .update-release time{display:block;margin-bottom:10px}
   .updates-read{margin-top:18px;width:100%;font-size:.875rem}
 
   /* budget hero */
@@ -448,10 +443,6 @@
     </div>
     <div class="updates-content" id="updatesContent">
       <div id="updatesLatest"></div>
-      <details class="updates-history" id="updatesHistory" hidden>
-        <summary>過往更新</summary>
-        <div id="updatesHistoryList"></div>
-      </details>
       <button class="updates-read ghost" id="updatesRead" type="button">知道了</button>
     </div>
   </dialog>

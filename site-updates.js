@@ -1,8 +1,8 @@
 (function () {
   'use strict';
-  const releases = Array.isArray(window.SITE_UPDATES) ? window.SITE_UPDATES : [];
+  const latest = Array.isArray(window.SITE_UPDATES) ? window.SITE_UPDATES[0] : null;
   const dialog = document.getElementById('siteUpdates');
-  if (!dialog || !releases.length) return;
+  if (!dialog || !latest) return;
 
   const storageKey = 'lad_readSiteUpdates';
   const launcher = document.getElementById('updatesLaunch');
@@ -16,13 +16,9 @@
     if (Array.isArray(saved)) readIds = saved;
   } catch (_) { /* Storage may be disabled; the notice still works. */ }
 
-  function renderRelease(release, showDate = true) {
+  function renderRelease(release) {
     const article = document.createElement('article');
     article.className = 'update-release';
-    const date = document.createElement('time');
-    date.dateTime = release.date;
-    date.textContent = release.date.replaceAll('-', '/');
-    if (showDate) article.append(date);
     const list = document.createElement('ul');
     for (const item of release.items) {
       const row = document.createElement('li');
@@ -40,18 +36,13 @@
     return article;
   }
 
-  document.getElementById('updatesLatest').append(renderRelease(releases[0], false));
-  const history = document.getElementById('updatesHistory');
-  history.hidden = releases.length < 2;
-  releases.slice(1).forEach(release => {
-    document.getElementById('updatesHistoryList').append(renderRelease(release));
-  });
-  document.getElementById('updatesDate').textContent = releases[0].date.replaceAll('-', '/');
+  document.getElementById('updatesLatest').append(renderRelease(latest));
+  document.getElementById('updatesDate').textContent = latest.date.replaceAll('-', '/');
   function refreshUnread() {
-    const unread = releases.filter(release => !readIds.includes(release.id)).length;
-    badge.hidden = unread === 0;
-    dot.hidden = unread === 0;
-    badge.textContent = unread ? `${unread} 則新更新` : '';
+    const unread = !readIds.includes(latest.id);
+    badge.hidden = !unread;
+    dot.hidden = !unread;
+    badge.textContent = unread ? '新更新' : '';
     return unread;
   }
   function openDialog() {
@@ -61,7 +52,7 @@
   }
   // Native dialog handles focus trapping and Escape; every close marks this release read.
   dialog.addEventListener('close', () => {
-    readIds = releases.map(release => release.id);
+    readIds = [latest.id];
     try { localStorage.setItem(storageKey, JSON.stringify(readIds)); } catch (_) {}
     refreshUnread();
     document.body.classList.remove('updates-modal-open');
@@ -71,5 +62,5 @@
   closeButton.addEventListener('click', () => dialog.close());
   readButton.addEventListener('click', () => dialog.close());
   launcher.hidden = false;
-  if (refreshUnread() > 0) openDialog();
+  if (refreshUnread()) openDialog();
 })();
