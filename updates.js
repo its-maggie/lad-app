@@ -1,6 +1,22 @@
 // 最新一則放最前面；每次發布使用新的 id，已讀的訪客才會再次收到提醒。
 window.SITE_UPDATES = [
   {
+    id: "2026-10-02-popup-and-tentative-rerun",
+    date: "2026-10-02",
+    items: [
+      {
+        type: "schedule",
+        title: "半透明侵占復刻｜暫定 10/21–10/27",
+        body: "預測排期調整為 10/21–10/27，共 7 天。尚未官方確認，月曆維持虛線標示。"
+      },
+      {
+        type: "feature",
+        title: "公告改為進站彈出視窗",
+        body: "按右上角叉叉即可關閉，不佔月曆版面。想重看時，點網站右上角的小鈴鐺。"
+      }
+    ]
+  },
+  {
     id: "2026-10-02-rafayel-and-notices",
     date: "2026-10-02",
     items: [

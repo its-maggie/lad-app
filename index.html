@@ -12,9 +12,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@500;600;700&display=swap" rel="stylesheet">
-<script src="schedule.js?v=20261002"></script>
+<script src="schedule.js?v=20261002-2"></script>
 <script src="updates.js"></script>
-<script src="site-updates.js?v=20261002" defer></script>
+<script src="site-updates.js?v=20261002-2" defer></script>
 <script src="packs.js"></script>
 <style>
   :root{
@@ -69,7 +69,7 @@
 
   .wrap{max-width:520px;margin:0 auto;padding:max(8px,env(safe-area-inset-top)) 16px 0;position:relative;z-index:1}
 
-  header{padding:0 4px 12px;text-align:center}
+  header{padding:0 4px 12px;text-align:center;position:relative}
   header .logo{width:40px;height:40px;color:#fff;margin:0 auto 2px;display:block;opacity:.95}
   header h1{font-family:"Noto Serif TC",serif;font-size:21px;font-weight:600;margin:0;letter-spacing:8px;text-indent:8px}
   header p{margin:3px 0 0;color:var(--muted);font-size:12px;letter-spacing:3px;text-transform:uppercase}
@@ -123,18 +123,22 @@
   button.ghost{background:transparent;border:1px solid var(--line)}
   button.block{width:100%;margin-top:4px}
 
-  /* Shared across every tab; unread releases expand without stealing focus. */
-  .site-updates[hidden],.site-updates [hidden]{display:none!important}
-  .site-updates{background:rgba(49,34,84,.82);padding:16px}
-  .updates-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  /* Updates live in a modal so the calendar keeps its space. */
+  .updates-launch[hidden],.updates-launch [hidden],.updates-dialog [hidden]{display:none!important}
+  .updates-launch{position:absolute;right:0;top:2px;width:44px;min-height:44px;padding:10px;border-radius:50%;background:rgba(56,42,96,.3);border-color:var(--line-soft)}
+  .updates-launch-dot{position:absolute;right:3px;top:3px;width:8px;height:8px;border-radius:50%;background:var(--pink)}
+  .updates-dialog{max-height:80vh;max-height:80dvh;overflow:hidden;background:rgba(49,34,84,.98)}
+  .updates-dialog[open]{display:flex;flex-direction:column}
+  body.updates-modal-open{overflow:hidden}
+  .updates-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:18px 20px 14px;border-bottom:1px solid var(--line-soft);flex:0 0 auto}
   .updates-heading{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-  .site-updates h2{font-family:inherit;font-size:1rem;font-weight:700;letter-spacing:0;margin:0}
+  .updates-dialog h2{font-family:inherit;font-size:1.125rem;font-weight:700;letter-spacing:0;margin:0}
   .updates-date,.update-release time{font-size:.875rem;color:var(--muted)}
   .updates-unread,.update-kind{font-size:.875rem;letter-spacing:0;border:1px solid var(--line-soft);border-radius:6px;padding:1px 7px}
   .updates-unread{color:#fff;background:rgba(255,179,223,.15);border-color:var(--pink)}
-  .updates-toggle{font-size:.875rem;letter-spacing:0;padding:8px 12px;min-height:44px}
-  .updates-content{margin-top:14px;border-top:1px solid var(--line-soft);padding-top:14px}
-  .update-release ul{list-style:none;padding:0;margin:10px 0 0;display:grid;gap:18px}
+  .updates-close{width:44px;min-height:44px;flex:0 0 44px;padding:10px;border-color:var(--line-soft);background:transparent}
+  .updates-content{padding:18px 20px 20px;overflow-y:auto;overscroll-behavior:contain;min-height:0}
+  .update-release ul{list-style:none;padding:0;margin:0;display:grid;gap:18px}
   .update-kind{display:inline-block;color:var(--good);margin-bottom:6px}
   .update-release h3{font-size:1rem;font-weight:500;line-height:1.6;margin:0;overflow-wrap:anywhere}
   .update-release p{font-size:1rem;color:var(--muted);margin:5px 0 0;line-height:1.7;overflow-wrap:anywhere}
@@ -142,6 +146,7 @@
   .updates-history summary{font-size:.875rem;min-height:44px;margin-top:4px;list-style:disclosure-closed;display:list-item}
   .updates-history[open] summary{list-style:disclosure-open}
   .updates-history .update-release{margin-top:16px}
+  .updates-history .update-release time{display:block;margin-bottom:10px}
   .updates-read{margin-top:18px;width:100%;font-size:.875rem}
 
   /* budget hero */
@@ -422,6 +427,10 @@
 
 <div class="wrap">
   <header>
+    <button class="updates-launch" id="updatesLaunch" type="button" aria-label="查看最近更新" title="最近更新" aria-haspopup="dialog" aria-controls="siteUpdates" hidden>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg>
+      <span class="updates-launch-dot" id="updatesDot" aria-hidden="true" hidden></span>
+    </button>
     <svg class="logo" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
       <path d="M24 6l4 7h-8zM16 13h16l8 11-16 17L8 24z"/><path d="M8 24h32M16 13l8 28M32 13l-8 28M20 13l4 6 4-6"/>
     </svg>
@@ -429,23 +438,23 @@
     <p>你的抽卡與課金規劃好幫手</p>
   </header>
 
-  <aside class="card site-updates" id="siteUpdates" aria-labelledby="updatesTitle" hidden>
+  <dialog class="updates-dialog" id="siteUpdates" aria-labelledby="updatesTitle">
     <div class="updates-head">
       <div>
         <div class="updates-heading"><h2 id="updatesTitle">最近更新</h2><span class="updates-unread" id="updatesUnread" hidden></span></div>
         <span class="updates-date" id="updatesDate"></span>
       </div>
-      <button class="updates-toggle" id="updatesToggle" type="button" aria-expanded="false" aria-controls="updatesContent">查看更新</button>
+      <button class="updates-close" id="updatesClose" type="button" aria-label="關閉最近更新" autofocus><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
     </div>
-    <div class="updates-content" id="updatesContent" hidden>
+    <div class="updates-content" id="updatesContent">
       <div id="updatesLatest"></div>
       <details class="updates-history" id="updatesHistory" hidden>
         <summary>過往更新</summary>
         <div id="updatesHistoryList"></div>
       </details>
-      <button class="updates-read ghost" id="updatesRead" type="button">已讀並收起</button>
+      <button class="updates-read ghost" id="updatesRead" type="button">知道了</button>
     </div>
-  </aside>
+  </dialog>
 
   <!-- ============ 預算 ============ -->
   <section class="tabview" id="tab-budget">

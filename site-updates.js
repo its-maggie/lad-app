@@ -1,12 +1,13 @@
 (function () {
   'use strict';
   const releases = Array.isArray(window.SITE_UPDATES) ? window.SITE_UPDATES : [];
-  const panel = document.getElementById('siteUpdates');
-  if (!panel || !releases.length) return;
+  const dialog = document.getElementById('siteUpdates');
+  if (!dialog || !releases.length) return;
 
   const storageKey = 'lad_readSiteUpdates';
-  const toggle = document.getElementById('updatesToggle');
-  const content = document.getElementById('updatesContent');
+  const launcher = document.getElementById('updatesLaunch');
+  const closeButton = document.getElementById('updatesClose');
+  const dot = document.getElementById('updatesDot');
   const badge = document.getElementById('updatesUnread');
   const readButton = document.getElementById('updatesRead');
   let readIds = [];
@@ -49,28 +50,26 @@
   function refreshUnread() {
     const unread = releases.filter(release => !readIds.includes(release.id)).length;
     badge.hidden = unread === 0;
+    dot.hidden = unread === 0;
     badge.textContent = unread ? `${unread} 則新更新` : '';
-    readButton.textContent = unread ? '已讀並收起' : '收起更新';
     return unread;
   }
-  function setExpanded(expanded, markRead = false) {
-    content.hidden = !expanded;
-    toggle.setAttribute('aria-expanded', String(expanded));
-    toggle.textContent = expanded ? '收起更新' : '查看更新';
-    if (markRead) {
-      readIds = releases.map(release => release.id);
-      try { localStorage.setItem(storageKey, JSON.stringify(readIds)); } catch (_) {}
-      refreshUnread();
-    }
+  function openDialog() {
+    if (dialog.open) return;
+    dialog.showModal();
+    document.body.classList.add('updates-modal-open');
   }
-  toggle.addEventListener('click', () => {
-    const expanded = toggle.getAttribute('aria-expanded') === 'true';
-    setExpanded(!expanded, expanded);
+  // Native dialog handles focus trapping and Escape; every close marks this release read.
+  dialog.addEventListener('close', () => {
+    readIds = releases.map(release => release.id);
+    try { localStorage.setItem(storageKey, JSON.stringify(readIds)); } catch (_) {}
+    refreshUnread();
+    document.body.classList.remove('updates-modal-open');
+    launcher.focus({ preventScroll: true });
   });
-  readButton.addEventListener('click', () => {
-    setExpanded(false, true);
-    toggle.focus();
-  });
-  setExpanded(refreshUnread() > 0);
-  panel.hidden = false;
+  launcher.addEventListener('click', openDialog);
+  closeButton.addEventListener('click', () => dialog.close());
+  readButton.addEventListener('click', () => dialog.close());
+  launcher.hidden = false;
+  if (refreshUnread() > 0) openDialog();
 })();

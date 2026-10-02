@@ -15,55 +15,62 @@ function mount(releases, stored = null, storageFails = false) {
   let saved = stored;
   function element() {
     return {
-      hidden: false, children: [], attributes: {}, handlers: {},
+      hidden: false, open: false, children: [], attributes: {}, handlers: {},
       append(...children) { this.children.push(...children); },
       setAttribute(key, value) { this.attributes[key] = value; },
       getAttribute(key) { return this.attributes[key]; },
       addEventListener(event, handler) { this.handlers[event] = handler; },
       focus() { this.focused = true; },
+      showModal() { this.open = true; },
+      close() { this.open = false; this.handlers.close?.(); },
     };
   }
-  for (const id of ["siteUpdates", "updatesToggle", "updatesContent", "updatesUnread", "updatesRead", "updatesLatest", "updatesHistory", "updatesHistoryList", "updatesDate"]) elements.set(id, element());
-  elements.get("siteUpdates").hidden = true;
+  for (const id of ["siteUpdates", "updatesLaunch", "updatesClose", "updatesDot", "updatesUnread", "updatesRead", "updatesLatest", "updatesHistory", "updatesHistoryList", "updatesDate"]) elements.set(id, element());
+  elements.get("updatesLaunch").hidden = true;
+  const bodyClasses = new Set();
   vm.runInNewContext(clientSource, {
     window: { SITE_UPDATES: releases },
-    document: { getElementById: id => elements.get(id), createElement: element },
+    document: { getElementById: id => elements.get(id), createElement: element, body: { classList: { add: value => bodyClasses.add(value), remove: value => bodyClasses.delete(value) } } },
     localStorage: {
       getItem() { if (storageFails) throw new Error("storage disabled"); return saved; },
       setItem(key, value) { if (storageFails) throw new Error("storage disabled"); saved = value; },
     },
   });
-  return { get: id => elements.get(id), stored: () => saved };
+  return { get: id => elements.get(id), stored: () => saved, bodyClasses };
 }
 
-test("new visitors see the notice; dismissal persists, can reopen, and a new id reminds again", () => {
+test("unread notices open a modal; closing persists, the bell reopens it, and new releases remind again", () => {
   const first = mount([release("first")]);
-  assert.equal(first.get("siteUpdates").hidden, false);
-  assert.equal(first.get("updatesContent").hidden, false);
+  assert.equal(first.get("updatesLaunch").hidden, false);
+  assert.equal(first.get("siteUpdates").open, true);
+  assert.equal(first.bodyClasses.has("updates-modal-open"), true);
   assert.equal(first.get("updatesUnread").textContent, "1 則新更新");
-  first.get("updatesRead").handlers.click();
-  assert.equal(first.get("updatesContent").hidden, true);
+  first.get("updatesClose").handlers.click();
+  assert.equal(first.get("siteUpdates").open, false);
+  assert.equal(first.bodyClasses.has("updates-modal-open"), false);
   assert.equal(first.get("updatesUnread").hidden, true);
-  assert.equal(first.get("updatesToggle").focused, true);
+  assert.equal(first.get("updatesDot").hidden, true);
+  assert.equal(first.get("updatesLaunch").focused, true);
   const returning = mount([release("first")], first.stored());
-  assert.equal(returning.get("updatesContent").hidden, true);
-  returning.get("updatesToggle").handlers.click();
-  assert.equal(returning.get("updatesToggle").getAttribute("aria-expanded"), "true");
-  returning.get("updatesToggle").handlers.click();
-  assert.equal(returning.get("updatesContent").hidden, true);
+  assert.equal(returning.get("siteUpdates").open, false);
+  returning.get("updatesLaunch").handlers.click();
+  assert.equal(returning.get("siteUpdates").open, true);
+  returning.get("updatesRead").handlers.click();
+  assert.equal(returning.get("siteUpdates").open, false);
   const updated = mount([release("second"), release("first")], first.stored());
-  assert.equal(updated.get("updatesContent").hidden, false);
+  assert.equal(updated.get("siteUpdates").open, true);
   assert.equal(updated.get("updatesUnread").textContent, "1 則新更新");
   assert.equal(updated.get("updatesHistory").hidden, false);
   assert.equal(updated.get("updatesHistoryList").children.length, 1);
 });
 
-test("missing notices stay hidden; corrupt or blocked storage does not break the notice", () => {
-  assert.equal(mount([]).get("siteUpdates").hidden, true);
-  assert.equal(mount([release("first")], "invalid json").get("updatesContent").hidden, false);
+test("missing notices stay hidden; corrupt or blocked storage does not break the modal", () => {
+  assert.equal(mount([]).get("siteUpdates").open, false);
+  assert.equal(mount([]).get("updatesLaunch").hidden, true);
+  assert.equal(mount([release("first")], "invalid json").get("siteUpdates").open, true);
   const blocked = mount([release("first")], null, true);
   blocked.get("updatesRead").handlers.click();
-  assert.equal(blocked.get("updatesContent").hidden, true);
+  assert.equal(blocked.get("siteUpdates").open, false);
 });
 
 test("automatic announcements preserve history and deduplicate the same change", () => {
