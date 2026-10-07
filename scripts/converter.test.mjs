@@ -7,6 +7,7 @@ const html = fs.readFileSync(new URL('../index.html', import.meta.url), 'utf8');
 const inlineScript = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map(match => match[1]).join('\n');
 const converter = inlineScript.slice(inlineScript.indexOf('const MONTHLY_DIA='), inlineScript.indexOf('/* ---------- init ---------- */'));
 const packs = fs.readFileSync(new URL('../packs.js', import.meta.url), 'utf8');
+const regionalPrices = fs.readFileSync(new URL('../regional-prices.js', import.meta.url), 'utf8');
 
 function mount(saved = {}) {
   const storage = structuredClone(saved);
@@ -27,6 +28,7 @@ function mount(saved = {}) {
     DB: { get: (key, fallback) => structuredClone(storage[key] ?? fallback), set: (key, value) => { storage[key] = structuredClone(value); } },
     I: {}, svg: () => '', esc: value => String(value), NT: value => `NT$${value}`, fmtPulls: value => String(value),
   });
+  vm.runInContext(regionalPrices, context);
   vm.runInContext(packs, context);
   vm.runInContext(converter, context);
   if (storage.calc?.reserveUnit === 'dia') context.setReserveUnit('dia', false);
@@ -115,4 +117,42 @@ test('reset clears converter resources, overrides and packs while preserving the
   assert.deepEqual(storage.expenses, wallet);
   assert.equal(get('officialTickets').value, 10);
   assert.equal(get('recordPacks').disabled, true);
+});
+
+test('regional totals preserve decimal prices and currency switches preserve resources and quantities', () => {
+  const { context, get, storage } = mount({calc:{pool:'混池',cur:150,tickets:2,pulls:40,officialTicketsByPool:{混池:0}},packQuantities:{混池:[2,1,0,0,0,0,0,0]}});
+  const quantities=structuredClone(storage.packQuantities),calc=structuredClone(storage.calc);
+  context.setPackCurrency('MYR');
+  assert.equal(get('packTotalValue').textContent, 'RM8.7');
+  assert.deepEqual(storage.packQuantities, quantities);
+  assert.deepEqual(storage.calc, calc);
+  assert.equal(storage.packCurrency, 'MYR');
+  const reload=mount(storage);
+  assert.equal(reload.get('packTotalValue').textContent, 'RM8.7');
+  context.setPackCurrency('HKD');
+  assert.equal(get('packTotalValue').textContent, 'HK$18');
+  get('poolSel').value='月卡池';context.calc();
+  assert.match(get('packTable').innerHTML, /推估/);
+  assert.match(get('packTotalNote').textContent, /含推估價格/);
+});
+
+test('old rerun quantities clamp to corrected purchase caps and recommendations respect 254 pull limit', () => {
+  const { context, get, storage } = mount({calc:{pool:'復刻池',pulls:254},packQuantities:{復刻池:[1,3,5,3,10]}});
+  assert.deepEqual(storage.packQuantities.復刻池,[1,1,1,3,10]);
+  assert.equal(get('packTotalValue').textContent,'NT$9,870');
+  assert.match(get('packTotalNote').textContent,/254 抽/);
+  get('targetPulls').value='255';context.calc();
+  assert.match(get('packMsg').innerHTML,/超過此卡池單輪上限/);
+  context.setPackQuantity(1,3);context.setPackQuantity(2,5);
+  assert.deepEqual(storage.packQuantities.復刻池,[1,1,1,3,10]);
+});
+
+test('missing regional prices cannot silently understate a selected total or be recorded', () => {
+  const { context, get } = mount({calc:{pool:'混池',pulls:30}});
+  context.window.REGIONAL_PACK_PRICES=[];
+  context.setPackCurrency('MYR');
+  context.setPackQuantity(0,1);
+  assert.equal(get('packTotalValue').textContent,'金額待確認');
+  assert.equal(get('recordPacks').disabled,true);
+  assert.match(get('packMsg').innerHTML,/售價尚待確認/);
 });

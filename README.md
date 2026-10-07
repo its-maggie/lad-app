@@ -8,13 +8,14 @@
 
 | 位置 | 內容 |
 | --- | --- |
-| 根目錄 | 目前網站：`index.html`、`schedule.js`、`packs.js`、`updates.js`、`site-updates.js`、背景圖片與圖示 |
+| 根目錄 | 目前網站：`index.html`、`schedule.js`、`packs.js`、`regional-prices.js`、`updates.js`、`site-updates.js`、背景圖片與圖示 |
 | `ux-research.html` | Journey、Persona 與使用者研究紀錄 |
 | `docs/` | 官方排期同步、問卷、更新公告與專案整理說明 |
 | `scripts/` | 排期同步、公告維護與測試 |
 | `references/schedules/` | 排期預測原圖，最新為 `排期預測1007.jpg` |
 | `references/designs/` | 視覺設計參考圖 |
-| `data/` | 卡池機制、禮包與獲鑽原始 CSV |
+| `references/prices/` | 玩家提供的各地禮包價格截圖 |
+| `data/` | 卡池機制、禮包、獲鑽原始 CSV 與 `禮包地區價格比較.csv` |
 | `promo/threads/` | Threads 推廣圖卡與文案，包含原有舊版資料夾 |
 | `archive/versions/` | 舊版 HTML 原始快照 |
 | `archive/dropbox-conflicts/` | 按衝突日期及原路徑保存的 Dropbox 副本 |
@@ -40,3 +41,5 @@ node --test scripts/*.test.mjs
 Git 與部署設定已歸回此資料夾。將變更 commit 並 push 至 GitHub `main`，既有 `Deploy to Vercel` 工作流程會先跑測試，再部署正式站。
 
 公告規則見 [AGENTS.md](AGENTS.md) 與 [docs/site-updates.md](docs/site-updates.md)。
+
+地區價格來源、推估方式與記帳相容性見 [docs/regional-prices.md](docs/regional-prices.md)。
