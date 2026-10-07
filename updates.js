@@ -1,9 +1,14 @@
 // 只保留最近一次公告；功能消息需由使用者明確要求才發布。
 window.SITE_UPDATES = [
   {
-    id: "2026-10-07-forecast-editable-tickets-and-credit",
+    id: "2026-10-07-regional-pack-prices-and-wallet",
     date: "2026-10-07",
     items: [
+      {
+        type: "feature",
+        title: "禮包換算與錢包支援港幣、馬幣了",
+        body: "在「課金禮包試算」旁選擇新台幣、港幣或馬幣，就能查看禮包價格與選購合計；按「帶入錢包記帳」可接著記錄花費，不同幣別會分開統計。目前已確認復刻池與混池的港幣、馬幣價格；日卡池、月卡池與生日池也可以試算，但價格仍為推估，會標示「推估」，之後取得實價再更新。"
+      },
       {
         type: "schedule",
         title: "預測排期更新｜10/7 版",

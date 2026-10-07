@@ -88,7 +88,7 @@
   .price-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:15px}
   .price-heading h2{margin:0;flex-wrap:wrap}
   .currency-choice{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--muted)}
-  .currency-choice select{width:auto;max-width:180px;padding:7px 10px;font-size:12px}
+  .currency-choice select{width:auto;max-width:180px;min-height:32px;padding:4px 26px 4px 8px;border-radius:10px;font-size:12px;line-height:1.35;background-position:right 6px center;background-size:16px 16px}
   .price-estimate{display:inline-block;margin-left:6px;color:#ffe08a;font-size:11px;font-weight:400}
   .currency-note{font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:10px}
   .card h2 svg{width:18px;height:18px;color:#fff;stroke-width:1.3}
@@ -1269,7 +1269,9 @@ function calcPacks(){
   const tiers=window.getPackTiers(pool,packCurrency);
   const hasMissingPrices=tiers.some(t=>t.priceStatus==='missing');
   const hasEstimates=tiers.some(t=>t.priceStatus==='estimated');
-  document.getElementById('packPriceNote').textContent=hasEstimates?'標示「推估」的價格尚待確認，購買前請以遊戲內售價為準。':packCurrency==='TWD'?'新台幣價格依既有禮包資料整理，請以遊戲內售價為準。':'港幣、馬幣價格依玩家提供的商店截圖整理；不同平台或活動可能有差異，請以遊戲內售價為準。';
+  const priceNote=document.getElementById('packPriceNote');
+  priceNote.textContent=hasEstimates?'標示「推估」的價格尚待確認，購買前請以遊戲內售價為準。':!['復刻池','混池'].includes(pool)&&packCurrency==='TWD'?'新台幣價格依既有禮包資料整理，請以遊戲內售價為準。':'';
+  priceNote.hidden=!priceNote.textContent;
   const valid=tiers.filter(t=>t.per!=null);
   const bestPer=valid.length?Math.min(...valid.map(t=>t.per)):null;
   // recommended tier: buy earlier tiers in order, but only the needed number of packs in the final tier
