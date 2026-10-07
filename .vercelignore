@@ -1,6 +1,16 @@
 .DS_Store
+.git/
+.github/
 .claude/
 .vercel/
+.env*
+.gitignore
 *.csv
-0804排期預測.jpg
-Tulimond.com  About Page - interior design and visual art.png
+archive/
+references/
+data/
+promo/
+docs/
+scripts/
+README.md
+AGENTS.md

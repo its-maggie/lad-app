@@ -11,3 +11,10 @@ Tulimond.com  About Page - interior design and visual art.png
 .claude/
 .vercel
 .env*
+
+# 本機參考資料、推廣素材及 Dropbox 衝突副本
+/data/
+/references/
+/promo/
+/archive/dropbox-conflicts/
+/archive/versions/*.html

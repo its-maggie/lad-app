@@ -2,6 +2,13 @@
 
 這是原生 HTML / CSS / JavaScript 靜態網站，GitHub `main` 透過既有 GitHub Actions 部署至 Vercel。
 
+## 專案位置與檔案
+
+- Git、GitHub Actions 與 Vercel 設定位於本資料夾，執行 Git 或部署命令時以此為工作目錄。
+- 根目錄保留目前使用的網站程式與背景圖片；`docs/` 放文件，`scripts/` 放維護腳本與測試。
+- `references/`、`data/`、`promo/` 放參考圖片、原始資料與推廣素材；`archive/` 保留舊版 HTML 和 Dropbox 衝突副本。整理時保留原始內容。
+- 本機素材由 `.gitignore` 排除；原本已追蹤的歷史檔案仍保留版本控制。`.vercelignore` 排除全部參考與封存資料。
+
 ## 發布更新
 
 - 更新官方排期時，同步修改 `schedule.js` 的日期、`tentative` 與 `SCHEDULE_META.updated`。
