@@ -16,7 +16,7 @@ export function recordScheduleUpdate(file, changes, date) {
     items: changes.map(change => ({
       type: "schedule",
       title: `${change.name}｜排期已確認`,
-      body: `活動時間已確認：${change.start.replaceAll("-", "/")}–${change.end.replaceAll("-", "/")}。可以到「排期」查看，安排你的抽卡與存鑽計畫。`,
+      body: `活動期間已確認為 ${change.start.replaceAll("-", "/")}–${change.end.replaceAll("-", "/")}。可於「排期」查看活動日期，規劃抽卡與存鑽。`,
     })),
   };
   fs.writeFileSync(file, `// 只保留最近一次公告；功能消息需由使用者明確要求才發布。\nwindow.SITE_UPDATES = ${JSON.stringify([latest], null, 2)};\n`);
