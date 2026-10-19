@@ -35,9 +35,9 @@ window.OFFICIAL_TICKET_RULES = {
   "月卡復刻池": {initial:0,milestones:[
     ...[10,20,30,40,50].map(at=>({at,reward:2})),
     ...[75,100].map(at=>({at,reward:5}))
-  ],note:"累抽 10／20／30／40／50 抽各返還 2 張金券，75／100 抽各返還 5 張，共 20 張。達標後領券，僅折抵後續抽數。"},
-  "生日復刻池": {initial:0,milestones:[],note:"無累抽返還。"},
-  "混池復刻池": {initial:0,milestones:[],note:"無累抽返還。"},
+  ]},
+  "生日復刻池": {initial:0,milestones:[]},
+  "混池復刻池": {initial:0,milestones:[]},
   "協會補給": {initial:0,milestones:[]},
   "其他": {initial:0,milestones:[]}
 };

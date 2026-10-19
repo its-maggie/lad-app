@@ -58,19 +58,17 @@ test('monthly rerun returns become usable after milestones and cap at twenty tic
   }
 });
 
-test('rerun choices update tickets, diamond gap, costs and rule explanation together',()=>{
+test('rerun choices update tickets, diamond gap and costs together',()=>{
   const {context,get,storage}=mount({calc:{pool:'月卡復刻池',pulls:100}});
   assert.equal(get('officialTickets').value,15);
   assert.equal(get('paidPulls').textContent,85);
   assert.equal(get('gapDia').textContent,'12,750');
   assert.equal(get('packTotalValue').textContent,'NT$3,310');
-  assert.match(get('poolRuleNote').textContent,/共 20 張.*達標後領券/);
   get('poolSel').value='生日復刻池';context.calc();
   assert.equal(get('officialTickets').value,0);
   assert.equal(get('paidPulls').textContent,100);
   assert.equal(get('gapDia').textContent,'15,000');
   assert.equal(get('packTotalValue').textContent,'NT$4,130');
-  assert.equal(get('poolRuleNote').textContent,'無累抽返還。');
   get('poolSel').value='月卡復刻池';context.calc();
   get('officialTickets').value='0';context.setOfficialTickets();
   assert.equal(get('packTotalValue').textContent,'NT$4,130');

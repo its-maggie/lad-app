@@ -16,7 +16,7 @@
 <script src="updates.js"></script>
 <script src="site-updates.js?v=20261002-3" defer></script>
 <script src="regional-prices.js?v=20261019-rerun-types"></script>
-<script src="packs.js?v=20261019-rerun-returns"></script>
+<script src="packs.js?v=20261019-rerun-returns-2"></script>
 <style>
   :root{
     /* pink → purple dream palette (ref: Tulimond) */
@@ -610,7 +610,6 @@
     <div class="card">
       <div class="field-head calc-heading"><h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12l4 6-10 12L2 9z"/><path d="M2 9h20M9.5 3 6 9l6 12M14.5 3 18 9l-6 12"/></svg>抽卡目標換算</h2><button class="text-action" type="button" onclick="resetConverter()">重設換算</button></div>
       <div class="field"><label for="poolSel">① 先選擇卡池類型</label><select id="poolSel" onchange="calc()"></select></div>
-      <div class="hint" id="poolRuleNote" style="margin:0 0 10px" aria-live="polite" hidden></div>
       <div class="meta-line" style="margin:2px 0 10px">② 再輸入持有資源與抽卡目標</div>
       <div class="grid2">
         <div class="field"><label for="curDia">目前持有（鑽）</label><input type="number" id="curDia" inputmode="numeric" placeholder="0" oninput="calc()"></div>
@@ -1152,9 +1151,6 @@ function calc(){
     : `為後續密集排期先存 · 相當於 ${reserveData.dia.toLocaleString()} 鑽`;
   const selectedPool=window.normalizePackPool(document.getElementById('poolSel').value);
   document.getElementById('poolSel').value=selectedPool;
-  const poolRuleNote=document.getElementById('poolRuleNote');
-  poolRuleNote.textContent=(window.OFFICIAL_TICKET_RULES[selectedPool]||{}).note||'';
-  poolRuleNote.hidden=!poolRuleNote.textContent;
   // 累抽返還只依「這次預計實抽」計算；預留抽數尚未抽出，不會觸發返券。
   const estimatedGifts=officialTicketCount(selectedPool,pulls);
   const gifts=availableOfficialTickets(selectedPool,pulls);
