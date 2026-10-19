@@ -8,7 +8,16 @@
    ============================================================= */
 
 window.MONTHLY_DIA = 7060;                 // 月卡黨每月約可獲得鑽石
-window.PACK_POOLS  = ["日卡池","混池","月卡池","生日池","復刻池","協會補給","其他"];
+window.PACK_POOLS  = ["日卡池","混池","月卡池","生日池","月卡／生日復刻池","混池復刻池","協會補給","其他"];
+window.normalizePackPool = pool=>pool==='復刻池'?'月卡／生日復刻池':pool;
+window.migratePackPoolRecords = records=>{
+  const migrated={...records};
+  if(Object.hasOwn(migrated,'復刻池')){
+    if(!Object.hasOwn(migrated,'月卡／生日復刻池'))migrated['月卡／生日復刻池']=migrated['復刻池'];
+    delete migrated['復刻池'];
+  }
+  return migrated;
+};
 
 // 官方免費金券：initial 為免費贈送；milestones 為完成該累抽數後返還的張數。
 window.OFFICIAL_TICKET_RULES = {
@@ -21,7 +30,8 @@ window.OFFICIAL_TICKET_RULES = {
     {every:10,reward:2,from:60,to:100}
   ]},
   "生日池": {initial:20,milestones:[]},
-  "復刻池": {initial:0,milestones:[]},
+  "月卡／生日復刻池": {initial:0,milestones:[]},
+  "混池復刻池": {initial:0,milestones:[]},
   "協會補給": {initial:0,milestones:[]},
   "其他": {initial:0,milestones:[]}
 };
@@ -55,7 +65,7 @@ window.PACK_DATA = {
     {tier:"六",price:820,qty:10,packPulls:20,cumPulls:271,cumCost:10145,per:41},
     {tier:"七",price:1490,qty:1,packPulls:null,cumPulls:271,cumCost:11635,per:null},
   ],
-  "復刻池":[
+  "月卡／生日復刻池":[
     {tier:"一",price:30,qty:1,packPulls:2,cumPulls:2,cumCost:30,per:15},
     {tier:"二",price:150,qty:1,packPulls:6,cumPulls:8,cumCost:180,per:25},
     {tier:"三",price:320,qty:1,packPulls:10,cumPulls:18,cumCost:500,per:32},
@@ -80,6 +90,13 @@ window.PACK_DATA = {
 window.PACK_DATA["月卡池"] = window.PACK_DATA["月卡池/生日池"];
 window.PACK_DATA["生日池"] = window.PACK_DATA["月卡池/生日池"];
 
+// 混池復刻比月卡／生日復刻多一階 NT$590；每包 16 抽由玩家確認。
+window.PACK_DATA["混池復刻池"] = [
+  ...window.PACK_DATA["月卡／生日復刻池"].slice(0,4),
+  {tier:"五",price:590,qty:3,packPulls:16,cumPulls:102,cumCost:3440,per:36.875},
+  {tier:"六",price:820,qty:10,packPulls:20,cumPulls:302,cumCost:11640,per:41},
+].map(tier=>({...tier,source:'references/prices/混池復刻－台幣.PNG',received:'2026-10-19'}));
+
 // 「其他」為定期禮包，無累計抽數，僅列單抽 CP 值
 window.PACK_OTHER = [
   {name:"周卡",                     price:220, per:31.4},
@@ -95,9 +112,10 @@ window.PACK_CURRENCIES = {
 window.formatMoney = (amount,currency='TWD')=>amount==null||!Number.isFinite(Number(amount))?'待確認':
   (window.PACK_CURRENCIES[currency]||window.PACK_CURRENCIES.TWD).symbol+Number(amount).toLocaleString('zh-TW',{maximumFractionDigits:2});
 window.resolvePackPrice = (pool,tier,currency='TWD')=>{
+  pool=window.normalizePackPool(pool);
   const base=(window.PACK_DATA[pool]||[]).find(p=>p.tier===tier);
   if(!base)return {price:null,status:'missing',source:'',method:'缺少禮包內容'};
-  if(currency==='TWD')return {price:base.price,status:'confirmed',source:'戀與深空_禮包總表',method:'台灣原始資料'};
+  if(currency==='TWD')return {price:base.price,status:'confirmed',source:base.source||'戀與深空_禮包總表',method:base.source?'玩家截圖實價':'台灣原始資料'};
   if(!window.PACK_CURRENCIES[currency])return {price:null,status:'missing',source:'',method:'不支援的幣別'};
   const rows=(window.REGIONAL_PACK_PRICES||[]).filter(r=>r.currency===currency);
   const direct=rows.filter(r=>r.pool===pool&&r.tier===tier);
@@ -105,6 +123,7 @@ window.resolvePackPrice = (pool,tier,currency='TWD')=>{
     if(direct.some(r=>r.price!==direct[0].price))return {price:null,status:'missing',source:direct.map(r=>r.source).join('；'),method:'實價資料衝突，待確認'};
     return {price:direct[0].price,status:'confirmed',source:direct[0].source,method:'玩家截圖實價'};
   }
+  if(pool==='混池復刻池')return {price:null,status:'missing',source:'',method:'混池復刻池地區售價待確認'};
   // 復刻與混池的 NT$320 禮包海外價格不同，推估僅使用同一組混池參考。
   const anchors=rows.filter(r=>r.pool==='混池').sort((a,b)=>a.twdPrice-b.twdPrice);
   if(!anchors.length)return {price:null,status:'missing',source:'',method:'缺少地區參考價格'};
@@ -119,6 +138,7 @@ window.resolvePackPrice = (pool,tier,currency='TWD')=>{
   return {price:null,status:'missing',source:'',method:'超出參考價位範圍，待確認'};
 };
 window.getPackTiers = (pool,currency='TWD')=>{
+  pool=window.normalizePackPool(pool);
   let cumCost=0,cumPulls=0;
   return (window.PACK_DATA[pool]||[]).map(t=>{
     const resolved=window.resolvePackPrice(pool,t.tier,currency);

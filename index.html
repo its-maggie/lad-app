@@ -15,8 +15,8 @@
 <script src="schedule.js?v=20261019"></script>
 <script src="updates.js"></script>
 <script src="site-updates.js?v=20261002-3" defer></script>
-<script src="regional-prices.js?v=20261007"></script>
-<script src="packs.js?v=20261007-currency"></script>
+<script src="regional-prices.js?v=20261019"></script>
+<script src="packs.js?v=20261019-reruns"></script>
 <style>
   :root{
     /* pink → purple dream palette (ref: Tulimond) */
@@ -1079,7 +1079,7 @@ const MONTHLY_DIA=Number(window.MONTHLY_DIA)||0;
 const DIA_PER_PULL=150;            // 每抽固定 150 鑽
 let reserveUnit='pulls';
 const savedOfficialTickets=DB.get('calc',{}).officialTicketsByPool;
-let officialTicketOverrides=Object.fromEntries(Object.entries(savedOfficialTickets&&typeof savedOfficialTickets==='object'&&!Array.isArray(savedOfficialTickets)?savedOfficialTickets:{}).filter(([,value])=>Number.isFinite(value)&&value>=0).map(([pool,value])=>[pool,Math.floor(value)]));
+let officialTicketOverrides=window.migratePackPoolRecords(Object.fromEntries(Object.entries(savedOfficialTickets&&typeof savedOfficialTickets==='object'&&!Array.isArray(savedOfficialTickets)?savedOfficialTickets:{}).filter(([,value])=>Number.isFinite(value)&&value>=0).map(([pool,value])=>[pool,Math.floor(value)])));
 function availableOfficialTickets(pool,target){
   return Object.hasOwn(officialTicketOverrides,pool)?officialTicketOverrides[pool]:officialTicketCount(pool,target);
 }
@@ -1149,7 +1149,8 @@ function calc(){
   document.getElementById('reserveEquivalent').textContent=reserveUnit==='dia'
     ? `為後續密集排期先存 · 相當於 ${fmtPulls(reserve)} 抽`
     : `為後續密集排期先存 · 相當於 ${reserveData.dia.toLocaleString()} 鑽`;
-  const selectedPool=document.getElementById('poolSel').value;
+  const selectedPool=window.normalizePackPool(document.getElementById('poolSel').value);
+  document.getElementById('poolSel').value=selectedPool;
   // 累抽返還只依「這次預計實抽」計算；預留抽數尚未抽出，不會觸發返券。
   const estimatedGifts=officialTicketCount(selectedPool,pulls);
   const gifts=availableOfficialTickets(selectedPool,pulls);
@@ -1191,7 +1192,8 @@ function setPackCurrency(currency){
   DB.set('packCurrency',packCurrency);calcPacks();
 }
 const savedPackQuantities=DB.get('packQuantities',{});
-const manualPackQuantities=savedPackQuantities&&typeof savedPackQuantities==='object'&&!Array.isArray(savedPackQuantities)?savedPackQuantities:{};
+const manualPackQuantities=window.migratePackPoolRecords(savedPackQuantities&&typeof savedPackQuantities==='object'&&!Array.isArray(savedPackQuantities)?savedPackQuantities:{});
+if(Object.hasOwn(savedPackQuantities||{},'復刻池'))DB.set('packQuantities',manualPackQuantities);
 let recommendedPackQuantities=[];
 let selectedPackQuantities=[];
 function setPackQuantity(index,value){
@@ -1270,7 +1272,7 @@ function calcPacks(){
   const hasMissingPrices=tiers.some(t=>t.priceStatus==='missing');
   const hasEstimates=tiers.some(t=>t.priceStatus==='estimated');
   const priceNote=document.getElementById('packPriceNote');
-  priceNote.textContent=hasEstimates?'標示「推估」的價格尚待確認，購買前請以遊戲內售價為準。':!['復刻池','混池'].includes(pool)&&packCurrency==='TWD'?'新台幣價格依既有禮包資料整理，請以遊戲內售價為準。':'';
+  priceNote.textContent=hasEstimates?'標示「推估」的價格尚待確認，購買前請以遊戲內售價為準。':!['月卡／生日復刻池','混池復刻池','混池'].includes(pool)&&packCurrency==='TWD'?'新台幣價格依既有禮包資料整理，請以遊戲內售價為準。':'';
   priceNote.hidden=!priceNote.textContent;
   const valid=tiers.filter(t=>t.per!=null);
   const bestPer=valid.length?Math.min(...valid.map(t=>t.per)):null;
@@ -1343,7 +1345,7 @@ function prefillRecommendedExpense(){
   const sel=document.getElementById('poolSel');
   (window.PACK_POOLS||[]).filter(p=>!['協會補給','其他'].includes(p)).forEach(p=>{const o=document.createElement('option');o.value=p;o.textContent=p;sel.appendChild(o);});
   const c=DB.get('calc',null);
-  if(c){document.getElementById('curDia').value=c.cur||'';document.getElementById('curTickets').value=c.tickets||'';document.getElementById('targetPulls').value=c.pulls||'';document.getElementById('reservePulls').value=c.reserve||'';if(c.reserveUnit==='dia')setReserveUnit('dia',false);if(c.pool&&[...sel.options].some(o=>o.value===c.pool))sel.value=c.pool;}
+  if(c){document.getElementById('curDia').value=c.cur||'';document.getElementById('curTickets').value=c.tickets||'';document.getElementById('targetPulls').value=c.pulls||'';document.getElementById('reservePulls').value=c.reserve||'';if(c.reserveUnit==='dia')setReserveUnit('dia',false);const pool=window.normalizePackPool(c.pool);if(pool&&[...sel.options].some(o=>o.value===pool))sel.value=pool;}
   const t=new Date();calY=t.getFullYear();calM=t.getMonth();
   document.getElementById('expDate').value=todayStr();
   renderBudget();renderCal();calc();

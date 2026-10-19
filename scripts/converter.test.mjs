@@ -138,13 +138,37 @@ test('regional totals preserve decimal prices and currency switches preserve res
 
 test('old rerun quantities clamp to corrected purchase caps and recommendations respect 254 pull limit', () => {
   const { context, get, storage } = mount({calc:{pool:'復刻池',pulls:254},packQuantities:{復刻池:[1,3,5,3,10]}});
-  assert.deepEqual(storage.packQuantities.復刻池,[1,1,1,3,10]);
+  assert.equal(get('poolSel').value,'月卡／生日復刻池');
+  assert.deepEqual(storage.packQuantities['月卡／生日復刻池'],[1,1,1,3,10]);
+  assert.equal(storage.packQuantities.復刻池,undefined);
   assert.equal(get('packTotalValue').textContent,'NT$9,870');
   assert.match(get('packTotalNote').textContent,/254 抽/);
   get('targetPulls').value='255';context.calc();
   assert.match(get('packMsg').innerHTML,/超過此卡池單輪上限/);
   context.setPackQuantity(1,3);context.setPackQuantity(2,5);
-  assert.deepEqual(storage.packQuantities.復刻池,[1,1,1,3,10]);
+  assert.deepEqual(storage.packQuantities['月卡／生日復刻池'],[1,1,1,3,10]);
+});
+
+test('birthday screenshot prices remove estimates and keep the final bundle pull count unknown',()=>{
+  const {context,get}=mount({calc:{pool:'生日池'},packQuantities:{生日池:[3,3,3,2,2,10,1]}});
+  context.setPackCurrency('HKD');
+  assert.equal(get('packTotalValue').textContent,'HK$3,033');
+  assert.doesNotMatch(get('packTable').innerHTML,/推估/);
+  assert.match(get('packTotalNote').textContent,/已知抽數 271 抽/);
+  context.setPackCurrency('MYR');
+  assert.equal(get('packTotalValue').textContent,'RM1,767.6');
+  assert.doesNotMatch(get('packTotalNote').textContent,/推估/);
+});
+
+test('legacy rerun ticket overrides migrate without replacing existing new-pool selections',()=>{
+  const {context,get,storage}=mount({calc:{pool:'復刻池',pulls:100,officialTicketsByPool:{復刻池:7}},packQuantities:{復刻池:[1,1,1,3,10],'月卡／生日復刻池':[0,0,0,0,1]}});
+  assert.equal(get('officialTickets').value,7);
+  assert.equal(storage.calc.officialTicketsByPool.復刻池,undefined);
+  assert.equal(storage.calc.officialTicketsByPool['月卡／生日復刻池'],7);
+  assert.deepEqual(storage.packQuantities['月卡／生日復刻池'],[0,0,0,0,1]);
+  assert.equal(get('packTotalValue').textContent,'NT$820');
+  context.calc();
+  assert.equal(get('officialTickets').value,7);
 });
 
 test('missing regional prices cannot silently understate a selected total or be recorded', () => {
@@ -155,4 +179,26 @@ test('missing regional prices cannot silently understate a selected total or be 
   assert.equal(get('packTotalValue').textContent,'金額待確認');
   assert.equal(get('recordPacks').disabled,true);
   assert.match(get('packMsg').innerHTML,/售價尚待確認/);
+});
+
+test('mixed reruns use the 590 tier, respect the 302 pull limit, and keep selections separate across rerun types',()=>{
+  const {context,get,storage}=mount({calc:{pool:'混池復刻池',pulls:70}});
+  assert.match(get('packMsg').innerHTML,/第 五 階/);
+  assert.match(get('packMsg').innerHTML,/70 抽/);
+  assert.equal(get('packTotalValue').textContent,'NT$2,260');
+  context.setPackQuantity(4,3);
+  assert.match(get('packTotalNote').textContent,/102 抽/);
+  assert.equal(get('packTotalValue').textContent,'NT$3,440');
+  get('poolSel').value='月卡／生日復刻池';get('targetPulls').value='254';context.calc();
+  assert.equal(get('packTotalValue').textContent,'NT$9,870');
+  get('poolSel').value='混池復刻池';get('targetPulls').value='302';context.calc();
+  assert.deepEqual(storage.packQuantities['混池復刻池'],[1,1,1,3,3,0]);
+  context.applyRecommendedPacks();
+  assert.equal(get('packTotalValue').textContent,'NT$11,640');
+  assert.match(get('packTotalNote').textContent,/302 抽/);
+  get('targetPulls').value='303';context.calc();
+  assert.match(get('packMsg').innerHTML,/超過此卡池單輪上限/);
+  context.setPackCurrency('MYR');context.setPackQuantity(4,1);
+  assert.equal(get('packTotalValue').textContent,'金額待確認');
+  assert.equal(get('recordPacks').disabled,true);
 });
