@@ -13,8 +13,10 @@ test('regional prices match supplied screenshots without sharing birthday prices
   for(const [pool,code,prices] of [
     ['混池','HKD',[5,8,38,78,98,168,218,428]],
     ['混池','MYR',[1.9,4.9,22.9,49.9,59.9,99.9,124.9,249.9]],
-    ['月卡／生日復刻池','HKD',[8,38,68,98,218]],
-    ['月卡／生日復刻池','MYR',[4.9,22.9,39.9,59.9,124.9]],
+    ['生日復刻池','HKD',[8,38,68,98,218]],
+    ['生日復刻池','MYR',[4.9,22.9,39.9,59.9,124.9]],
+    ['月卡復刻池','HKD',[8,38,68,98,218]],
+    ['月卡復刻池','MYR',[4.9,22.9,39.9,59.9,124.9]],
     ['生日池','HKD',[5,8,38,68,98,218,368]],
     ['生日池','MYR',[1.9,4.9,22.9,39.9,59.9,124.9,229.9]]
   ]){
@@ -31,11 +33,14 @@ test('regional prices match supplied screenshots without sharing birthday prices
 });
 test('rerun pool structures differ by the 590 tier and unprovided overseas mixed-rerun prices stay unknown',()=>{
   const w=load();
-  const monthly=w.getPackTiers('月卡／生日復刻池','TWD');
+  const monthly=w.getPackTiers('生日復刻池','TWD');
   const mixed=w.getPackTiers('混池復刻池','TWD');
   assert.deepEqual(Array.from(monthly,t=>[t.price,t.qty,t.packPulls]),[[30,1,2],[150,1,6],[320,1,10],[390,3,12],[820,10,20]]);
   assert.deepEqual(Array.from(mixed,t=>[t.price,t.qty,t.packPulls]),[[30,1,2],[150,1,6],[320,1,10],[390,3,12],[590,3,16],[820,10,20]]);
   assert.equal(monthly.at(-1).cumPulls,254);
+  assert.deepEqual(Array.from(w.getPackTiers('月卡復刻池','TWD'),t=>[t.price,t.qty,t.packPulls]),Array.from(monthly,t=>[t.price,t.qty,t.packPulls]));
+  assert.ok(w.PACK_POOLS.includes('月卡復刻池')&&w.PACK_POOLS.includes('生日復刻池'));
+  assert.ok(!w.PACK_POOLS.includes('月卡／生日復刻池'));
   assert.equal(mixed.at(-1).cumPulls,302);
   assert.equal(mixed.at(-1).cumCost,11640);
   for(const code of ['HKD','MYR'])assert.ok(w.getPackTiers('混池復刻池',code).every(t=>t.price===null&&t.priceStatus==='missing'&&t.cumCost===null));

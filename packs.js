@@ -8,13 +8,15 @@
    ============================================================= */
 
 window.MONTHLY_DIA = 7060;                 // 月卡黨每月約可獲得鑽石
-window.PACK_POOLS  = ["日卡池","混池","月卡池","生日池","月卡／生日復刻池","混池復刻池","協會補給","其他"];
-window.normalizePackPool = pool=>pool==='復刻池'?'月卡／生日復刻池':pool;
+window.PACK_POOLS  = ["日卡池","混池","月卡池","生日池","月卡復刻池","生日復刻池","混池復刻池","協會補給","其他"];
+window.normalizePackPool = pool=>['復刻池','月卡／生日復刻池'].includes(pool)?'生日復刻池':pool;
 window.migratePackPoolRecords = records=>{
   const migrated={...records};
-  if(Object.hasOwn(migrated,'復刻池')){
-    if(!Object.hasOwn(migrated,'月卡／生日復刻池'))migrated['月卡／生日復刻池']=migrated['復刻池'];
-    delete migrated['復刻池'];
+  // 舊合併選項沒有返還；遷移至生日復刻，避免替不明種類的舊紀錄多扣金券。
+  for(const legacy of ['月卡／生日復刻池','復刻池']){
+    if(!Object.hasOwn(migrated,legacy))continue;
+    if(!Object.hasOwn(migrated,'生日復刻池'))migrated['生日復刻池']=migrated[legacy];
+    delete migrated[legacy];
   }
   return migrated;
 };
@@ -30,8 +32,12 @@ window.OFFICIAL_TICKET_RULES = {
     {every:10,reward:2,from:60,to:100}
   ]},
   "生日池": {initial:20,milestones:[]},
-  "月卡／生日復刻池": {initial:0,milestones:[]},
-  "混池復刻池": {initial:0,milestones:[]},
+  "月卡復刻池": {initial:0,milestones:[
+    ...[10,20,30,40,50].map(at=>({at,reward:2})),
+    ...[75,100].map(at=>({at,reward:5}))
+  ],note:"累抽 10／20／30／40／50 抽各返還 2 張金券，75／100 抽各返還 5 張，共 20 張。達標後領券，僅折抵後續抽數。"},
+  "生日復刻池": {initial:0,milestones:[],note:"無累抽返還。"},
+  "混池復刻池": {initial:0,milestones:[],note:"無累抽返還。"},
   "協會補給": {initial:0,milestones:[]},
   "其他": {initial:0,milestones:[]}
 };
@@ -65,7 +71,7 @@ window.PACK_DATA = {
     {tier:"六",price:820,qty:10,packPulls:20,cumPulls:271,cumCost:10145,per:41},
     {tier:"七",price:1490,qty:1,packPulls:null,cumPulls:271,cumCost:11635,per:null},
   ],
-  "月卡／生日復刻池":[
+  "生日復刻池":[
     {tier:"一",price:30,qty:1,packPulls:2,cumPulls:2,cumCost:30,per:15},
     {tier:"二",price:150,qty:1,packPulls:6,cumPulls:8,cumCost:180,per:25},
     {tier:"三",price:320,qty:1,packPulls:10,cumPulls:18,cumCost:500,per:32},
@@ -89,10 +95,11 @@ window.PACK_DATA = {
 // 月卡池與生日池使用同一份禮包表，但官方免費金券規則不同。
 window.PACK_DATA["月卡池"] = window.PACK_DATA["月卡池/生日池"];
 window.PACK_DATA["生日池"] = window.PACK_DATA["月卡池/生日池"];
+window.PACK_DATA["月卡復刻池"] = window.PACK_DATA["生日復刻池"];
 
 // 混池復刻比月卡／生日復刻多一階 NT$590；每包 16 抽由玩家確認。
 window.PACK_DATA["混池復刻池"] = [
-  ...window.PACK_DATA["月卡／生日復刻池"].slice(0,4),
+  ...window.PACK_DATA["生日復刻池"].slice(0,4),
   {tier:"五",price:590,qty:3,packPulls:16,cumPulls:102,cumCost:3440,per:36.875},
   {tier:"六",price:820,qty:10,packPulls:20,cumPulls:302,cumCost:11640,per:41},
 ].map(tier=>({...tier,source:'references/prices/混池復刻－台幣.PNG',received:'2026-10-19'}));

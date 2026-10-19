@@ -49,6 +49,56 @@ test('page JavaScript parses and automatic returns exclude the target milestone 
   assert.equal(get('officialTickets').value, 10);
 });
 
+test('monthly rerun returns become usable after milestones and cap at twenty tickets',()=>{
+  const {context}=mount();
+  for(const [target,expected] of [[0,0],[10,0],[11,1],[12,2],[20,2],[21,3],[22,4],[30,4],[32,6],[40,6],[42,8],[50,8],[52,10],[75,10],[76,11],[80,15],[100,15],[101,16],[105,20],[300,20]]){
+    assert.equal(context.officialTicketCount('月卡復刻池',target),expected,`target ${target}`);
+    assert.equal(context.officialTicketCount('生日復刻池',target),0);
+    assert.equal(context.officialTicketCount('混池復刻池',target),0);
+  }
+});
+
+test('rerun choices update tickets, diamond gap, costs and rule explanation together',()=>{
+  const {context,get,storage}=mount({calc:{pool:'月卡復刻池',pulls:100}});
+  assert.equal(get('officialTickets').value,15);
+  assert.equal(get('paidPulls').textContent,85);
+  assert.equal(get('gapDia').textContent,'12,750');
+  assert.equal(get('packTotalValue').textContent,'NT$3,310');
+  assert.match(get('poolRuleNote').textContent,/共 20 張.*達標後領券/);
+  get('poolSel').value='生日復刻池';context.calc();
+  assert.equal(get('officialTickets').value,0);
+  assert.equal(get('paidPulls').textContent,100);
+  assert.equal(get('gapDia').textContent,'15,000');
+  assert.equal(get('packTotalValue').textContent,'NT$4,130');
+  assert.equal(get('poolRuleNote').textContent,'無累抽返還。');
+  get('poolSel').value='月卡復刻池';context.calc();
+  get('officialTickets').value='0';context.setOfficialTickets();
+  assert.equal(get('packTotalValue').textContent,'NT$4,130');
+  const reload=mount(storage);
+  assert.equal(reload.get('officialTickets').value,0);
+  reload.context.restoreOfficialTickets();
+  assert.equal(reload.get('officialTickets').value,15);
+  reload.get('reservePulls').value='100';reload.context.calc();
+  assert.equal(reload.get('officialTickets').value,15);
+});
+
+test('both legacy rerun names preserve records without copying selections into monthly reruns',()=>{
+  for(const legacy of ['復刻池','月卡／生日復刻池']){
+    const {context,get,storage}=mount({calc:{pool:legacy,pulls:100,officialTicketsByPool:{[legacy]:7}},packQuantities:{[legacy]:[1,1,1,3,2]}});
+    assert.equal(get('poolSel').value,'生日復刻池');
+    assert.equal(get('officialTickets').value,7);
+    assert.deepEqual(storage.packQuantities['生日復刻池'],[1,1,1,3,2]);
+    assert.equal(storage.packQuantities[legacy],undefined);
+    get('poolSel').value='月卡復刻池';context.calc();
+    assert.equal(get('officialTickets').value,15);
+    context.setPackQuantity(4,1);
+    assert.deepEqual(storage.packQuantities['月卡復刻池'],[1,1,1,3,1]);
+    get('poolSel').value='生日復刻池';context.calc();
+    assert.deepEqual(storage.packQuantities['生日復刻池'],[1,1,1,3,2]);
+    assert.equal(get('officialTickets').value,7);
+  }
+});
+
 test('zero remaining official tickets changes the diamond gap and pack recommendation together', () => {
   const { context, get } = mount();
   get('targetPulls').value = '70';
@@ -138,15 +188,15 @@ test('regional totals preserve decimal prices and currency switches preserve res
 
 test('old rerun quantities clamp to corrected purchase caps and recommendations respect 254 pull limit', () => {
   const { context, get, storage } = mount({calc:{pool:'復刻池',pulls:254},packQuantities:{復刻池:[1,3,5,3,10]}});
-  assert.equal(get('poolSel').value,'月卡／生日復刻池');
-  assert.deepEqual(storage.packQuantities['月卡／生日復刻池'],[1,1,1,3,10]);
+  assert.equal(get('poolSel').value,'生日復刻池');
+  assert.deepEqual(storage.packQuantities['生日復刻池'],[1,1,1,3,10]);
   assert.equal(storage.packQuantities.復刻池,undefined);
   assert.equal(get('packTotalValue').textContent,'NT$9,870');
   assert.match(get('packTotalNote').textContent,/254 抽/);
   get('targetPulls').value='255';context.calc();
   assert.match(get('packMsg').innerHTML,/超過此卡池單輪上限/);
   context.setPackQuantity(1,3);context.setPackQuantity(2,5);
-  assert.deepEqual(storage.packQuantities['月卡／生日復刻池'],[1,1,1,3,10]);
+  assert.deepEqual(storage.packQuantities['生日復刻池'],[1,1,1,3,10]);
 });
 
 test('birthday screenshot prices remove estimates and keep the final bundle pull count unknown',()=>{
@@ -161,11 +211,11 @@ test('birthday screenshot prices remove estimates and keep the final bundle pull
 });
 
 test('legacy rerun ticket overrides migrate without replacing existing new-pool selections',()=>{
-  const {context,get,storage}=mount({calc:{pool:'復刻池',pulls:100,officialTicketsByPool:{復刻池:7}},packQuantities:{復刻池:[1,1,1,3,10],'月卡／生日復刻池':[0,0,0,0,1]}});
+  const {context,get,storage}=mount({calc:{pool:'復刻池',pulls:100,officialTicketsByPool:{復刻池:7}},packQuantities:{復刻池:[1,1,1,3,10],'生日復刻池':[0,0,0,0,1]}});
   assert.equal(get('officialTickets').value,7);
   assert.equal(storage.calc.officialTicketsByPool.復刻池,undefined);
-  assert.equal(storage.calc.officialTicketsByPool['月卡／生日復刻池'],7);
-  assert.deepEqual(storage.packQuantities['月卡／生日復刻池'],[0,0,0,0,1]);
+  assert.equal(storage.calc.officialTicketsByPool['生日復刻池'],7);
+  assert.deepEqual(storage.packQuantities['生日復刻池'],[0,0,0,0,1]);
   assert.equal(get('packTotalValue').textContent,'NT$820');
   context.calc();
   assert.equal(get('officialTickets').value,7);
@@ -189,7 +239,7 @@ test('mixed reruns use the 590 tier, respect the 302 pull limit, and keep select
   context.setPackQuantity(4,3);
   assert.match(get('packTotalNote').textContent,/102 抽/);
   assert.equal(get('packTotalValue').textContent,'NT$3,440');
-  get('poolSel').value='月卡／生日復刻池';get('targetPulls').value='254';context.calc();
+  get('poolSel').value='生日復刻池';get('targetPulls').value='254';context.calc();
   assert.equal(get('packTotalValue').textContent,'NT$9,870');
   get('poolSel').value='混池復刻池';get('targetPulls').value='302';context.calc();
   assert.deepEqual(storage.packQuantities['混池復刻池'],[1,1,1,3,3,0]);

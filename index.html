@@ -15,8 +15,8 @@
 <script src="schedule.js?v=20261019"></script>
 <script src="updates.js"></script>
 <script src="site-updates.js?v=20261002-3" defer></script>
-<script src="regional-prices.js?v=20261019"></script>
-<script src="packs.js?v=20261019-reruns"></script>
+<script src="regional-prices.js?v=20261019-rerun-types"></script>
+<script src="packs.js?v=20261019-rerun-returns"></script>
 <style>
   :root{
     /* pink → purple dream palette (ref: Tulimond) */
@@ -610,6 +610,7 @@
     <div class="card">
       <div class="field-head calc-heading"><h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12l4 6-10 12L2 9z"/><path d="M2 9h20M9.5 3 6 9l6 12M14.5 3 18 9l-6 12"/></svg>抽卡目標換算</h2><button class="text-action" type="button" onclick="resetConverter()">重設換算</button></div>
       <div class="field"><label for="poolSel">① 先選擇卡池類型</label><select id="poolSel" onchange="calc()"></select></div>
+      <div class="hint" id="poolRuleNote" style="margin:0 0 10px" aria-live="polite" hidden></div>
       <div class="meta-line" style="margin:2px 0 10px">② 再輸入持有資源與抽卡目標</div>
       <div class="grid2">
         <div class="field"><label for="curDia">目前持有（鑽）</label><input type="number" id="curDia" inputmode="numeric" placeholder="0" oninput="calc()"></div>
@@ -1151,6 +1152,9 @@ function calc(){
     : `為後續密集排期先存 · 相當於 ${reserveData.dia.toLocaleString()} 鑽`;
   const selectedPool=window.normalizePackPool(document.getElementById('poolSel').value);
   document.getElementById('poolSel').value=selectedPool;
+  const poolRuleNote=document.getElementById('poolRuleNote');
+  poolRuleNote.textContent=(window.OFFICIAL_TICKET_RULES[selectedPool]||{}).note||'';
+  poolRuleNote.hidden=!poolRuleNote.textContent;
   // 累抽返還只依「這次預計實抽」計算；預留抽數尚未抽出，不會觸發返券。
   const estimatedGifts=officialTicketCount(selectedPool,pulls);
   const gifts=availableOfficialTickets(selectedPool,pulls);
@@ -1193,7 +1197,7 @@ function setPackCurrency(currency){
 }
 const savedPackQuantities=DB.get('packQuantities',{});
 const manualPackQuantities=window.migratePackPoolRecords(savedPackQuantities&&typeof savedPackQuantities==='object'&&!Array.isArray(savedPackQuantities)?savedPackQuantities:{});
-if(Object.hasOwn(savedPackQuantities||{},'復刻池'))DB.set('packQuantities',manualPackQuantities);
+if(['復刻池','月卡／生日復刻池'].some(pool=>Object.hasOwn(savedPackQuantities||{},pool)))DB.set('packQuantities',manualPackQuantities);
 let recommendedPackQuantities=[];
 let selectedPackQuantities=[];
 function setPackQuantity(index,value){
@@ -1272,7 +1276,7 @@ function calcPacks(){
   const hasMissingPrices=tiers.some(t=>t.priceStatus==='missing');
   const hasEstimates=tiers.some(t=>t.priceStatus==='estimated');
   const priceNote=document.getElementById('packPriceNote');
-  priceNote.textContent=hasEstimates?'標示「推估」的價格尚待確認，購買前請以遊戲內售價為準。':!['月卡／生日復刻池','混池復刻池','混池'].includes(pool)&&packCurrency==='TWD'?'新台幣價格依既有禮包資料整理，請以遊戲內售價為準。':'';
+  priceNote.textContent=hasEstimates?'標示「推估」的價格尚待確認，購買前請以遊戲內售價為準。':!['月卡復刻池','生日復刻池','混池復刻池','混池'].includes(pool)&&packCurrency==='TWD'?'新台幣價格依既有禮包資料整理，請以遊戲內售價為準。':'';
   priceNote.hidden=!priceNote.textContent;
   const valid=tiers.filter(t=>t.per!=null);
   const bestPer=valid.length?Math.min(...valid.map(t=>t.per)):null;
