@@ -8,7 +8,7 @@ function load(){
   for(const file of ['regional-prices.js','packs.js'])vm.runInContext(fs.readFileSync(new URL(`../${file}`,import.meta.url),'utf8'),ctx);
   return ctx.window;
 }
-test('regional prices match supplied screenshots without sharing birthday prices with monthly pools',()=>{
+test('regional screenshot prices stay confirmed when other pools reference them',()=>{
   const w=load();
   for(const [pool,code,prices] of [
     ['混池','HKD',[5,8,38,78,98,168,218,428]],
@@ -31,7 +31,7 @@ test('regional prices match supplied screenshots without sharing birthday prices
   assert.equal(w.getPackTiers('生日池','MYR').at(-1).cumCost,1767.6);
   assert.equal(w.getPackTiers('生日池','MYR').at(-1).per,null);
 });
-test('rerun pool structures differ by the 590 tier and unprovided overseas mixed-rerun prices stay unknown',()=>{
+test('rerun pool structures differ by the 590 tier and mixed-rerun references follow regular mixed pools',()=>{
   const w=load();
   const monthly=w.getPackTiers('生日復刻池','TWD');
   const mixed=w.getPackTiers('混池復刻池','TWD');
@@ -43,18 +43,30 @@ test('rerun pool structures differ by the 590 tier and unprovided overseas mixed
   assert.ok(!w.PACK_POOLS.includes('月卡／生日復刻池'));
   assert.equal(mixed.at(-1).cumPulls,302);
   assert.equal(mixed.at(-1).cumCost,11640);
-  for(const code of ['HKD','MYR'])assert.ok(w.getPackTiers('混池復刻池',code).every(t=>t.price===null&&t.priceStatus==='missing'&&t.cumCost===null));
-});
-test('other pools remain estimated until real evidence arrives; interpolation is explicitly identified',()=>{
-  const w=load();
-  for(const pool of ['日卡池','月卡池']){
-    for(const currency of ['HKD','MYR'])assert.ok(w.getPackTiers(pool,currency).every(t=>t.priceStatus==='estimated'));
+  for(const [code,prices,total] of [['HKD',[8,38,78,98,168,218],3102],['MYR',[4.9,22.9,49.9,59.9,99.9,124.9],1806.1]]){
+    const tiers=w.getPackTiers('混池復刻池',code);
+    assert.deepEqual(Array.from(tiers,t=>t.price),prices);
+    assert.ok(tiers.every(t=>t.priceStatus==='estimated'&&t.priceSource.includes('混池-')));
+    assert.equal(tiers.at(-1).cumCost,total);
   }
-  const t=w.getPackTiers('月卡池','MYR')[3];
-  assert.equal(t.price,45.14);
-  assert.match(t.priceMethod,/線性內插/);
-  w.REGIONAL_PACK_PRICES.push({pool:'月卡池',tier:'四',currency:'MYR',price:39.9,source:'new-player-screenshot'});
-  assert.equal(w.getPackTiers('月卡池','MYR')[3].price,39.9);
+});
+test('daily and monthly pools use matching screenshot tiers as estimates; direct evidence takes priority',()=>{
+  const w=load();
+  for(const [pool,currency,prices] of [
+    ['日卡池','HKD',[5,8,38,78,98,218,428]],
+    ['日卡池','MYR',[1.9,4.9,22.9,49.9,59.9,124.9,249.9]],
+    ['月卡池','HKD',[5,8,38,68,98,218,368]],
+    ['月卡池','MYR',[1.9,4.9,22.9,39.9,59.9,124.9,229.9]]
+  ]){
+    const tiers=w.getPackTiers(pool,currency);
+    assert.deepEqual(Array.from(tiers,t=>t.price),prices);
+    assert.ok(tiers.every(t=>t.priceStatus==='estimated'&&t.priceMethod.includes('截圖售價')));
+  }
+  assert.equal(w.getPackTiers('月卡池','HKD').at(-1).cumCost,3033);
+  assert.equal(w.getPackTiers('月卡池','MYR').at(-1).cumCost,1767.6);
+  assert.equal(w.getPackTiers('月卡池','MYR').at(-1).per,null);
+  w.REGIONAL_PACK_PRICES.push({pool:'月卡池',tier:'四',currency:'MYR',price:38.9,source:'new-player-screenshot'});
+  assert.equal(w.getPackTiers('月卡池','MYR')[3].price,38.9);
   assert.equal(w.getPackTiers('月卡池','MYR')[3].priceStatus,'confirmed');
 });
 test('unknown or conflicting prices stay unknown, and unknown pulls are not given a single-pull cost',()=>{
@@ -62,6 +74,11 @@ test('unknown or conflicting prices stay unknown, and unknown pulls are not give
   w.REGIONAL_PACK_PRICES.push({pool:'混池',tier:'四',currency:'HKD',price:68,source:'conflict'});
   assert.equal(w.getPackTiers('混池','HKD')[3].price,null);
   assert.equal(w.getPackTiers('混池','HKD').at(-1).cumCost,null);
+  assert.equal(w.getPackTiers('日卡池','HKD')[3].price,null);
+  assert.equal(w.getPackTiers('混池復刻池','HKD')[2].price,null);
+  assert.equal(w.getPackTiers('混池復刻池','HKD').at(-1).cumCost,null);
+  w.REGIONAL_PACK_PRICES=w.REGIONAL_PACK_PRICES.filter(r=>!(r.pool==='生日池'&&r.tier==='四'&&r.currency==='MYR'));
+  assert.equal(w.getPackTiers('月卡池','MYR')[3].price,null);
   assert.equal(w.getPackTiers('月卡池','MYR').at(-1).per,null);
   assert.equal(w.resolvePackPrice('協會補給','Lv65','MYR').price,null);
   assert.equal(w.formatMoney(null,'MYR'),'待確認');

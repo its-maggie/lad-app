@@ -277,6 +277,21 @@ test('mixed reruns use the 590 tier, respect the 302 pull limit, and keep select
   get('targetPulls').value='318';context.calc();
   assert.match(get('packMsg').innerHTML,/超過此卡池單輪上限/);
   context.setPackCurrency('MYR');context.setPackQuantity(4,1);
-  assert.equal(get('packTotalValue').textContent,'金額待確認');
-  assert.equal(get('recordPacks').disabled,true);
+  assert.equal(get('packTotalValue').textContent,'RM1,606.3');
+  assert.equal(get('recordPacks').disabled,false);
+  assert.match(get('packTotalNote').textContent,/含推估價格/);
+});
+
+test('mixed-rerun regional references enable recommendations and preserve the ticket-adjusted gap',()=>{
+  const {context,get}=mount({calc:{pool:'混池復刻池',pulls:155}});
+  for(const [currency,total] of [['HKD','HK$1,358'],['MYR','RM806.9']]){
+    context.setPackCurrency(currency);
+    assert.equal(get('officialTickets').value,15);
+    assert.equal(get('gapDia').textContent,'21,000');
+    assert.equal(get('packTotalValue').textContent,total);
+    assert.equal(get('recordPacks').disabled,false);
+    assert.match(get('packMsg').innerHTML,/第 六 階/);
+    assert.match(get('packTable').innerHTML,/推估/);
+    assert.match(get('packTotalNote').textContent,/含推估價格/);
+  }
 });

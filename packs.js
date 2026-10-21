@@ -132,8 +132,15 @@ window.resolvePackPrice = (pool,tier,currency='TWD')=>{
     if(direct.some(r=>r.price!==direct[0].price))return {price:null,status:'missing',source:direct.map(r=>r.source).join('；'),method:'實價資料衝突，待確認'};
     return {price:direct[0].price,status:'confirmed',source:direct[0].source,method:'玩家截圖實價'};
   }
+  const reference=(window.REGIONAL_PACK_PRICE_REFERENCES||[]).find(r=>r.pool===pool&&r.tier===tier);
+  if(reference){
+    const matches=rows.filter(r=>r.pool===reference.referencePool&&r.tier===reference.referenceTier);
+    if(!matches.length)return {price:null,status:'missing',source:'',method:'缺少對應卡池的截圖售價'};
+    if(matches.some(r=>r.price!==matches[0].price))return {price:null,status:'missing',source:matches.map(r=>r.source).join('；'),method:'參照售價衝突，待確認'};
+    return {price:matches[0].price,status:'estimated',source:matches[0].source,method:`參考${reference.referencePool}第${reference.referenceTier}階截圖售價`};
+  }
   if(pool==='混池復刻池')return {price:null,status:'missing',source:'',method:'混池復刻池地區售價待確認'};
-  // 復刻與混池的 NT$320 禮包海外價格不同，推估僅使用同一組混池參考。
+  // 未指定參照階級的舊資料（如協會補給）沿用混池價位估算。
   const anchors=rows.filter(r=>r.pool==='混池').sort((a,b)=>a.twdPrice-b.twdPrice);
   if(!anchors.length)return {price:null,status:'missing',source:'',method:'缺少地區參考價格'};
   const match=anchors.find(r=>r.twdPrice===base.price);
