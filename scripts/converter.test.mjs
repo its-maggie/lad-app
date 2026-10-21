@@ -54,8 +54,36 @@ test('monthly rerun returns become usable after milestones and cap at twenty tic
   for(const [target,expected] of [[0,0],[10,0],[11,1],[12,2],[20,2],[21,3],[22,4],[30,4],[32,6],[40,6],[42,8],[50,8],[52,10],[75,10],[76,11],[80,15],[100,15],[101,16],[105,20],[300,20]]){
     assert.equal(context.officialTicketCount('月卡復刻池',target),expected,`target ${target}`);
     assert.equal(context.officialTicketCount('生日復刻池',target),0);
-    assert.equal(context.officialTicketCount('混池復刻池',target),0);
   }
+});
+
+test('mixed reruns return five tickets at 50, 100 and 150 pulls, usable only after each milestone',()=>{
+  const {context}=mount();
+  for(const [target,expected] of [[0,0],[49,0],[50,0],[51,1],[54,4],[55,5],[99,5],[100,5],[101,6],[104,9],[105,10],[149,10],[150,10],[151,11],[154,14],[155,15],[250,15],[255,15],[300,15]]){
+    assert.equal(context.officialTicketCount('混池復刻池',target),expected,`target ${target}`);
+  }
+});
+
+test('mixed rerun returns update the estimate, diamond gap and recommendation without counting reserves',()=>{
+  const {context,get,storage}=mount({calc:{pool:'混池復刻池',pulls:155}});
+  assert.equal(get('officialTickets').value,15);
+  assert.equal(get('officialTicketNote').textContent,'自動估算 15 張：免費贈送 0 張＋目標前可折抵累抽返還 15 張');
+  assert.equal(get('paidPulls').textContent,140);
+  assert.equal(get('gapDia').textContent,'21,000');
+  assert.match(get('packMsg').innerHTML,/還需課金 <b>140<\/b> 抽/);
+  const automaticCost=get('packTotalValue').textContent;
+  get('officialTickets').value='0';context.setOfficialTickets();
+  assert.equal(get('paidPulls').textContent,155);
+  assert.equal(get('gapDia').textContent,'23,250');
+  assert.notEqual(get('packTotalValue').textContent,automaticCost);
+  const reload=mount(storage);
+  assert.equal(reload.get('officialTickets').value,0);
+  reload.context.restoreOfficialTickets();
+  assert.equal(reload.get('officialTickets').value,15);
+  assert.equal(reload.get('packTotalValue').textContent,automaticCost);
+  reload.get('targetPulls').value='50';reload.get('reservePulls').value='150';reload.context.calc();
+  assert.equal(reload.get('officialTickets').value,0);
+  assert.equal(reload.get('paidPulls').textContent,200);
 });
 
 test('rerun choices update tickets, diamond gap and costs together',()=>{
@@ -244,7 +272,9 @@ test('mixed reruns use the 590 tier, respect the 302 pull limit, and keep select
   context.applyRecommendedPacks();
   assert.equal(get('packTotalValue').textContent,'NT$11,640');
   assert.match(get('packTotalNote').textContent,/302 抽/);
-  get('targetPulls').value='303';context.calc();
+  get('targetPulls').value='317';context.calc();
+  assert.doesNotMatch(get('packMsg').innerHTML,/超過此卡池單輪上限/);
+  get('targetPulls').value='318';context.calc();
   assert.match(get('packMsg').innerHTML,/超過此卡池單輪上限/);
   context.setPackCurrency('MYR');context.setPackQuantity(4,1);
   assert.equal(get('packTotalValue').textContent,'金額待確認');

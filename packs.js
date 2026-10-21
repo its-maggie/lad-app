@@ -37,7 +37,9 @@ window.OFFICIAL_TICKET_RULES = {
     ...[75,100].map(at=>({at,reward:5}))
   ]},
   "生日復刻池": {initial:0,milestones:[]},
-  "混池復刻池": {initial:0,milestones:[]},
+  "混池復刻池": {initial:0,milestones:[
+    {at:50,reward:5},{at:100,reward:5},{at:150,reward:5}
+  ]},
   "協會補給": {initial:0,milestones:[]},
   "其他": {initial:0,milestones:[]}
 };
