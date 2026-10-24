@@ -15,6 +15,7 @@
 <script src="schedule.js?v=20261024-forecast-2027-sync2"></script>
 <script src="updates.js"></script>
 <script src="site-updates.js?v=20261002-3" defer></script>
+<script src="analytics.js?v=20261024-1" defer></script>
 <script src="regional-prices.js?v=20261024-confirmed-regional-prices"></script>
 <script src="packs.js?v=20261024-confirmed-regional-prices"></script>
 <style>
@@ -655,6 +656,7 @@
   </section>
   <footer class="site-footer">
     <p>© 2026 深空省省</p>
+    <p><a href="privacy.html">隱私權與流量統計</a></p>
     <p>製作：<a href="https://www.threads.com/@chumei_0218" target="_blank" rel="noopener noreferrer">@chumei_0218</a></p>
   </footer>
 </div>
@@ -728,6 +730,7 @@ function showTab(t,btn){
   document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   window.scrollTo({top:0});
+  window.LAD_ANALYTICS?.view(t);
 }
 const FEEDBACK_URL='https://docs.google.com/forms/d/e/1FAIpQLSfyHTsrjN9MY36J2Fw8X3JaRB0ecuRKOuozsbm-BE9NdUAjfA/viewform?usp=header';
 function openFeedbackPrompt(){
@@ -859,6 +862,7 @@ function renderExpenseDashboard(){
 function saveBudget(){
   budgets[budgetKey()]={amount:Math.max(0,Number(document.getElementById('budgetInput').value)||0),threshold:Number(document.getElementById('thresholdInput').value)||80};
   DB.set('budgets',budgets);renderBudget();if(navigator.vibrate)navigator.vibrate(10);
+  window.LAD_ANALYTICS?.use('wallet','budget_save');
 }
 function addExpense(){
   const amt=Number(document.getElementById('expAmt').value);
@@ -868,6 +872,7 @@ function addExpense(){
   DB.set('expenses',expenses);document.getElementById('expAmt').value='';document.getElementById('expNote').value='';
   budgetMonth=date.slice(0,7);
   renderBudget();if(navigator.vibrate)navigator.vibrate(10);
+  window.LAD_ANALYTICS?.use('wallet','expense_add');
 }
 function openExpenseEditor(id){
   const e=expenses.find(x=>x.id===id);if(!e)return;
@@ -887,6 +892,7 @@ function saveExpenseEdit(){
   const e=expenses.find(x=>x.id===id);if(!e)return;
   Object.assign(e,{amt,date,cat:document.getElementById('editExpCat').value,note:document.getElementById('editExpNote').value.trim()});
   DB.set('expenses',expenses);budgetMonth=date.slice(0,7);closeExpenseEditor();renderBudget();
+  window.LAD_ANALYTICS?.use('wallet','expense_edit');
 }
 function deleteEditingExpense(){
   const id=Number(document.getElementById('editExpId').value);
@@ -966,9 +972,10 @@ function toggleLeadFilterPanel(){
 function toggleLead(name){
   if(selectedLeads.has(name))selectedLeads.delete(name);else selectedLeads.add(name);
   DB.set('leadFilter',[...selectedLeads]);calSel=null;renderCal();
+  window.LAD_ANALYTICS?.use('calendar','filter_change');
 }
-function selectAllLeads(){selectedLeads=new Set(leadNames);DB.set('leadFilter',leadNames);calSel=null;renderCal();}
-function clearLeadFilters(){selectedLeads=new Set();DB.set('leadFilter',[]);calSel=null;renderCal();}
+function selectAllLeads(){selectedLeads=new Set(leadNames);DB.set('leadFilter',leadNames);calSel=null;renderCal();window.LAD_ANALYTICS?.use('calendar','filter_change');}
+function clearLeadFilters(){selectedLeads=new Set();DB.set('leadFilter',[]);calSel=null;renderCal();window.LAD_ANALYTICS?.use('calendar','filter_change');}
 function dayDiff(d){return Math.ceil((new Date(d+'T00:00:00')-new Date(todayStr()+'T00:00:00'))/86400000);}
 // 預測依資料標記顯示，日期經過後也不會自動視為官方確認。
 function isForecast(e){return !!e.tentative;}
@@ -989,8 +996,8 @@ function eventsByDay(events){
   });
   return map;
 }
-function calMove(d){calM+=d;if(calM<0){calM=11;calY--}if(calM>11){calM=0;calY++}calSel=null;renderCal();}
-function calSelect(ds){calSel=(ds&&calSel===ds)?null:ds;renderCal();window.scrollTo({top:0,behavior:'smooth'});}
+function calMove(d){calM+=d;if(calM<0){calM=11;calY--}if(calM>11){calM=0;calY++}calSel=null;renderCal();window.LAD_ANALYTICS?.use('calendar','month_change');}
+function calSelect(ds){calSel=(ds&&calSel===ds)?null:ds;renderCal();window.scrollTo({top:0,behavior:'smooth'});window.LAD_ANALYTICS?.use('calendar','date_select');}
 function evItemHTML(e){
   const info=evInfo(e);
   const range=e.start?(e.end&&e.end!==e.start?`${e.start} ~ ${e.end}`:e.start):'日期未定';
@@ -1203,11 +1210,13 @@ function setPackQuantity(index,value){
   manualPackQuantities[pool]=[...selectedPackQuantities];
   DB.set('packQuantities',manualPackQuantities);
   updatePackTotal();
+  window.LAD_ANALYTICS?.use('converter','pack_quantity');
 }
 function applyRecommendedPacks(){
   delete manualPackQuantities[document.getElementById('poolSel').value];
   DB.set('packQuantities',manualPackQuantities);
   calcPacks();
+  window.LAD_ANALYTICS?.use('converter','pack_recommendation');
 }
 function updatePackTotal(){
   const pool=document.getElementById('poolSel').value;
@@ -1332,6 +1341,7 @@ function prefillRecommendedExpense(){
   document.getElementById('expDate').value=todayStr();
   showTab('budget',document.querySelector('nav button[data-tab="budget"]'));
   document.getElementById('expAmt').focus();
+  window.LAD_ANALYTICS?.use('converter','pack_record_prefill');
 }
 
 /* ---------- init ---------- */
