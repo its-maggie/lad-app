@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@500;600;700&display=swap" rel="stylesheet">
-<script src="schedule.js?v=20261024"></script>
+<script src="schedule.js?v=20261024-forecast-2027"></script>
 <script src="updates.js"></script>
 <script src="site-updates.js?v=20261002-3" defer></script>
 <script src="regional-prices.js?v=20261021-cross-pool-prices"></script>
@@ -970,9 +970,8 @@ function toggleLead(name){
 function selectAllLeads(){selectedLeads=new Set(leadNames);DB.set('leadFilter',leadNames);calSel=null;renderCal();}
 function clearLeadFilters(){selectedLeads=new Set();DB.set('leadFilter',[]);calSel=null;renderCal();}
 function dayDiff(d){return Math.ceil((new Date(d+'T00:00:00')-new Date(todayStr()+'T00:00:00'))/86400000);}
-// 已結束的排期日期不會再變動，即使原本是預測也一律當成已確認（實線）。
-function evEnded(e){const end=e.end||e.start;return !!end&&end<todayStr();}
-function isForecast(e){return !!e.tentative&&!evEnded(e);}
+// 預測依資料標記顯示，日期經過後也不會自動視為官方確認。
+function isForecast(e){return !!e.tentative;}
 function evInfo(e){
   if(!e.start)return{pill:e.tentative?'情報':'日期待定',cls:'tbd'};
   const dS=dayDiff(e.start),dE=dayDiff(e.end||e.start);
@@ -1002,7 +1001,7 @@ function evItemHTML(e){
   const leadTag=leads.length===1
     ? `<span class="lead-tag">${esc(leads[0])}</span>`
     : leads.length>1?`<span class="lead-tag">${leads.length===leadNames.length?'全員':'多人'}</span>`:'';
-  return `<div class="item">
+  return `<div class="item${isForecast(e)?' tentative':''}">
     <span class="ico-chip ${e.type}">${svg(evIcon[e.type]||I.spark)}</span>
     <div class="grow"><div class="t event-name"><span>${esc(e.name)}</span>${leadTag}</div><div class="s">${sub.join(' · ')}</div></div>
     <span class="pill ${info.cls}">${info.pill}</span></div>`;
