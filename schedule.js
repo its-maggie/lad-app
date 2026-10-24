@@ -35,6 +35,6 @@ window.SCHEDULE = [
   { name: "黎深脈脈傾音復刻",           type: "rerun",   start: "2026-11-24", end: "2026-12-01", tentative: true,  leads: ["黎深"] },
   { name: "祁煜單人月卡",               type: "monthly", start: "2026-12-03", end: "2026-12-12", tentative: true,  leads: ["祁煜"] },
   { name: "遵命飼養官復刻",             type: "rerun",   start: "2026-12-14", end: "2026-12-22", tentative: true,  leads: ["沈星回", "黎深", "祁煜", "秦徹"] },
-  { name: "夏以晝沉界日卡2.0復刻",       type: "rerun",   start: "2026-12-22", end: "2026-12-29", tentative: true,  leads: ["夏以晝"] },
+  { name: "沈冥日卡2.0復刻",             type: "rerun",   start: "2026-12-22", end: "2026-12-29", tentative: true,  leads: ["夏以晝"] },
   { name: "周年慶混池",                 type: "mixed",   start: "2026-12-31", end: "2027-01-20", tentative: true,  leads: ["沈星回", "黎深", "祁煜", "秦徹", "夏以晝"] }
 ];
