@@ -15,12 +15,14 @@ window.REGIONAL_PACK_PRICES = [
   ...[['HKD',8,'月卡生日卡復刻池-港幣.JPG'],['MYR',4.9,'月卡生日卡復刻池-馬幣.jpg']].map(([currency,price,file])=>({pool:'協會補給',tier:'Lv10',currency,twdPrice:30,price,source:`references/prices/${file}`,platform:'未提供',received:'2026-10-07'}))
 ];
 
-// 2026-10-21 使用者同意跨池參照。金額沿用來源階級的截圖售價，仍標示推估。
+// 2026-10-21 使用者同意跨池參照；2026-10-24 確認月卡與混池復刻售價。
+// 金額沿用來源階級；日卡池仍屬推估，其餘參照池依使用者確認標示實價。
 // 混池復刻各階折扣對應一般混池二至七階，不套用月卡／生日復刻的 NT$320 售價。
 window.REGIONAL_PACK_PRICE_REFERENCES = [
-  ['日卡池','混池','一二三四五七八'],
-  ['月卡池','生日池','一二三四五六七'],
-  ['混池復刻池','混池','二三四五六七']
-].flatMap(([pool,referencePool,referenceTiers])=>[...referenceTiers].map((referenceTier,i)=>({
-  pool,tier:'一二三四五六七八'[i],referencePool,referenceTier
+  ['日卡池','混池','一二三四五七八',false],
+  ['月卡池','生日池','一二三四五六七',true],
+  ['混池復刻池','混池','二三四五六七',true]
+].flatMap(([pool,referencePool,referenceTiers,confirmed])=>[...referenceTiers].map((referenceTier,i)=>({
+  pool,tier:'一二三四五六七八'[i],referencePool,referenceTier,
+  ...(confirmed?{confirmed:true,confirmedAt:'2026-10-24'}:{})
 })));

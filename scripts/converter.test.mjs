@@ -208,8 +208,8 @@ test('regional totals preserve decimal prices and currency switches preserve res
   context.setPackCurrency('HKD');
   assert.equal(get('packTotalValue').textContent, 'HK$18');
   get('poolSel').value='月卡池';context.calc();
-  assert.match(get('packTable').innerHTML, /推估/);
-  assert.match(get('packTotalNote').textContent, /含推估價格/);
+  assert.doesNotMatch(get('packTable').innerHTML, /推估/);
+  assert.doesNotMatch(get('packTotalNote').textContent, /含推估價格/);
 });
 
 test('old rerun quantities clamp to corrected purchase caps and recommendations respect 254 pull limit', () => {
@@ -279,7 +279,7 @@ test('mixed reruns use the 590 tier, respect the 302 pull limit, and keep select
   context.setPackCurrency('MYR');context.setPackQuantity(4,1);
   assert.equal(get('packTotalValue').textContent,'RM1,606.3');
   assert.equal(get('recordPacks').disabled,false);
-  assert.match(get('packTotalNote').textContent,/含推估價格/);
+  assert.doesNotMatch(get('packTotalNote').textContent,/含推估價格/);
 });
 
 test('mixed-rerun regional references enable recommendations and preserve the ticket-adjusted gap',()=>{
@@ -291,7 +291,39 @@ test('mixed-rerun regional references enable recommendations and preserve the ti
     assert.equal(get('packTotalValue').textContent,total);
     assert.equal(get('recordPacks').disabled,false);
     assert.match(get('packMsg').innerHTML,/第 六 階/);
+    assert.doesNotMatch(get('packTable').innerHTML,/推估/);
+    assert.doesNotMatch(get('packTotalNote').textContent,/含推估價格/);
+  }
+});
+
+test('confirmed regional prices remove estimate labels and expense warnings; daily estimates remain visible',()=>{
+  const {context,get}=mount({calc:{pool:'月卡池',pulls:50}});
+  context.setWalletCurrency=()=>{};
+  context.todayStr=()=> '2026-10-24';
+  context.showTab=()=>{};
+  context.document.querySelector=()=>null;
+  get('expAmt').focus=()=>{};
+  for(const currency of ['HKD','MYR']){
+    context.setPackCurrency(currency);
+    for(const pool of ['混池','月卡池','生日池','月卡復刻池','生日復刻池','混池復刻池']){
+      get('poolSel').value=pool;context.calc();
+      assert.doesNotMatch(get('packTable').innerHTML,/推估/,`${pool} ${currency}`);
+      assert.doesNotMatch(get('packTotalNote').textContent,/推估/);
+      assert.equal(get('packPriceNote').hidden,true);
+      context.prefillRecommendedExpense();
+      assert.doesNotMatch(get('expNote').value,/推估/);
+    }
+    get('poolSel').value='日卡池';context.calc();
     assert.match(get('packTable').innerHTML,/推估/);
-    assert.match(get('packTotalNote').textContent,/含推估價格/);
+    assert.match(get('packTotalNote').textContent,/推估/);
+    assert.equal(get('packPriceNote').hidden,false);
+    context.prefillRecommendedExpense();
+    assert.match(get('expNote').value,/推估/);
+  }
+  context.setPackCurrency('TWD');
+  for(const pool of ['日卡池','混池','月卡池','生日池','月卡復刻池','生日復刻池','混池復刻池','協會補給']){
+    get('poolSel').value=pool;context.calc();
+    assert.equal(get('packPriceNote').hidden,true,pool);
+    assert.equal(get('packPriceNote').textContent,'');
   }
 });

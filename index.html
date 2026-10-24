@@ -12,11 +12,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@500;600;700&display=swap" rel="stylesheet">
-<script src="schedule.js?v=20261024-forecast-2027"></script>
+<script src="schedule.js?v=20261024-forecast-2027-birthdays"></script>
 <script src="updates.js"></script>
 <script src="site-updates.js?v=20261002-3" defer></script>
-<script src="regional-prices.js?v=20261021-cross-pool-prices"></script>
-<script src="packs.js?v=20261021-cross-pool-prices"></script>
+<script src="regional-prices.js?v=20261024-confirmed-regional-prices"></script>
+<script src="packs.js?v=20261024-confirmed-regional-prices"></script>
 <style>
   :root{
     /* pink → purple dream palette (ref: Tulimond) */
@@ -1271,7 +1271,7 @@ function calcPacks(){
   const hasMissingPrices=tiers.some(t=>t.priceStatus==='missing');
   const hasEstimates=tiers.some(t=>t.priceStatus==='estimated');
   const priceNote=document.getElementById('packPriceNote');
-  priceNote.textContent=hasEstimates?'標示「推估」的價格尚待確認，購買前請以遊戲內售價為準。':!['月卡復刻池','生日復刻池','混池復刻池','混池','生日池'].includes(pool)&&packCurrency==='TWD'?'新台幣價格依既有禮包資料整理，請以遊戲內售價為準。':'';
+  priceNote.textContent=hasEstimates?'標示「推估」的價格尚待確認，購買前請以遊戲內售價為準。':'';
   priceNote.hidden=!priceNote.textContent;
   const valid=tiers.filter(t=>t.per!=null);
   const bestPer=valid.length?Math.min(...valid.map(t=>t.per)):null;

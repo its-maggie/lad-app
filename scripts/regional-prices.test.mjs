@@ -46,11 +46,11 @@ test('rerun pool structures differ by the 590 tier and mixed-rerun references fo
   for(const [code,prices,total] of [['HKD',[8,38,78,98,168,218],3102],['MYR',[4.9,22.9,49.9,59.9,99.9,124.9],1806.1]]){
     const tiers=w.getPackTiers('混池復刻池',code);
     assert.deepEqual(Array.from(tiers,t=>t.price),prices);
-    assert.ok(tiers.every(t=>t.priceStatus==='estimated'&&t.priceSource.includes('混池-')));
+    assert.ok(tiers.every(t=>t.priceStatus==='confirmed'&&t.priceSource.includes('混池-')&&t.priceMethod.includes('使用者確認')));
     assert.equal(tiers.at(-1).cumCost,total);
   }
 });
-test('daily and monthly pools use matching screenshot tiers as estimates; direct evidence takes priority',()=>{
+test('daily prices stay estimated while user-confirmed monthly prices follow birthday tiers; direct evidence takes priority',()=>{
   const w=load();
   for(const [pool,currency,prices] of [
     ['日卡池','HKD',[5,8,38,78,98,218,428]],
@@ -60,7 +60,9 @@ test('daily and monthly pools use matching screenshot tiers as estimates; direct
   ]){
     const tiers=w.getPackTiers(pool,currency);
     assert.deepEqual(Array.from(tiers,t=>t.price),prices);
-    assert.ok(tiers.every(t=>t.priceStatus==='estimated'&&t.priceMethod.includes('截圖售價')));
+    const status=pool==='日卡池'?'estimated':'confirmed';
+    assert.ok(tiers.every(t=>t.priceStatus===status));
+    assert.ok(tiers.every(t=>t.priceMethod.includes(pool==='日卡池'?'截圖售價':'使用者確認')));
   }
   assert.equal(w.getPackTiers('月卡池','HKD').at(-1).cumCost,3033);
   assert.equal(w.getPackTiers('月卡池','MYR').at(-1).cumCost,1767.6);
@@ -68,6 +70,16 @@ test('daily and monthly pools use matching screenshot tiers as estimates; direct
   w.REGIONAL_PACK_PRICES.push({pool:'月卡池',tier:'四',currency:'MYR',price:38.9,source:'new-player-screenshot'});
   assert.equal(w.getPackTiers('月卡池','MYR')[3].price,38.9);
   assert.equal(w.getPackTiers('月卡池','MYR')[3].priceStatus,'confirmed');
+});
+test('HKD and MYR event pools are confirmed except daily pools, without treating missing prices as confirmed',()=>{
+  const w=load();
+  for(const currency of ['HKD','MYR']){
+    for(const pool of ['混池','月卡池','生日池','月卡復刻池','生日復刻池','混池復刻池']){
+      assert.ok(w.getPackTiers(pool,currency).every(t=>t.priceStatus==='confirmed'),`${pool} ${currency}`);
+    }
+    assert.ok(w.getPackTiers('日卡池',currency).every(t=>t.priceStatus==='estimated'));
+  }
+  assert.ok(w.REGIONAL_PACK_PRICE_REFERENCES.filter(r=>r.pool!=='日卡池').every(r=>r.confirmed&&r.confirmedAt==='2026-10-24'));
 });
 test('unknown or conflicting prices stay unknown, and unknown pulls are not given a single-pull cost',()=>{
   const w=load();

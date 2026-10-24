@@ -6,6 +6,7 @@
    11/13–12/1 混池與秦徹分線分列，保留類型與角色篩選。
    10/28 起改排祁煜單人月卡、12/3 起改排沈星回日卡3.0，均屬預測。
    2027 年日卡、月卡、混池、生日與復刻日期皆為預測，整理至 7/26。
+   生日池預測修正為祁煜 3/1–3/7、秦徹 4/13–4/19、夏以晝 6/8–6/14。
    注意：tentative 為 true 的項目屬預測資料，日期及內容皆可能變動。
    ============================================================= */
 
@@ -42,16 +43,16 @@ window.SCHEDULE = [
   { name: "沈星回銀瀑奏鳴復刻（月卡）", type: "rerun", start: "2027-01-21", end: "2027-01-28", tentative: true, leads: ["沈星回"] },
   { name: "黎深單人月卡（新一輪）", type: "monthly", start: "2027-01-29", end: "2027-02-07", tentative: true, leads: ["黎深"] },
   { name: "新混池2／情人節混池", type: "mixed", start: "2027-02-10", end: "2027-02-26", tentative: true, leads: ["沈星回", "黎深", "祁煜", "秦徹", "夏以晝"] },
-  { name: "祁煜生日", type: "birthday", start: "2027-02-27", end: "2027-03-07", tentative: true, leads: ["祁煜"] },
+  { name: "祁煜生日", type: "birthday", start: "2027-03-01", end: "2027-03-07", tentative: true, leads: ["祁煜"] },
   { name: "黎深新日卡3.0", type: "daily", start: "2027-03-08", end: "2027-03-22", tentative: true, leads: ["黎深"] },
   { name: "奔湧至昨夜盡頭復刻（混池）", type: "rerun", start: "2027-03-21", end: "2027-03-27", tentative: true, leads: ["沈星回", "黎深", "祁煜", "秦徹"] },
   { name: "單人月卡（新一輪・角色待定）", type: "monthly", start: "2027-03-29", end: "2027-04-05", tentative: true, leads: [] },
-  { name: "秦徹生日", type: "birthday", start: "2027-04-11", end: "2027-04-19", tentative: true, leads: ["秦徹"] },
+  { name: "秦徹生日", type: "birthday", start: "2027-04-13", end: "2027-04-19", tentative: true, leads: ["秦徹"] },
   { name: "夏以晝觸痛訊號復刻（月卡）", type: "rerun", start: "2027-04-20", end: "2027-04-28", tentative: true, leads: ["夏以晝"] },
   { name: "新混池3", type: "mixed", start: "2027-04-30", end: "2027-05-17", tentative: true, leads: ["沈星回", "黎深", "祁煜", "秦徹", "夏以晝"] },
   { name: "明日無處可逃復刻（混池）", type: "rerun", start: "2027-05-12", end: "2027-05-18", tentative: true, leads: ["沈星回", "黎深", "祁煜", "秦徹", "夏以晝"] },
   { name: "秦徹新日卡3.0", type: "daily", start: "2027-05-19", end: "2027-06-05", tentative: true, leads: ["秦徹"] },
-  { name: "夏以晝生日", type: "birthday", start: "2027-06-06", end: "2027-06-14", tentative: true, leads: ["夏以晝"] },
+  { name: "夏以晝生日", type: "birthday", start: "2027-06-08", end: "2027-06-14", tentative: true, leads: ["夏以晝"] },
   { name: "黎深願緣長復刻（月卡）", type: "rerun", start: "2027-06-17", end: "2027-06-23", tentative: true, leads: ["黎深"] },
   { name: "單人月卡（新一輪・角色待定）", type: "monthly", start: "2027-06-26", end: "2027-07-04", tentative: true, leads: [] },
   { name: "夏以晝新日卡3.0", type: "daily", start: "2027-07-09", end: "2027-07-26", tentative: true, leads: ["夏以晝"] }

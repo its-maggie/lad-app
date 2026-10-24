@@ -137,7 +137,7 @@ window.resolvePackPrice = (pool,tier,currency='TWD')=>{
     const matches=rows.filter(r=>r.pool===reference.referencePool&&r.tier===reference.referenceTier);
     if(!matches.length)return {price:null,status:'missing',source:'',method:'缺少對應卡池的截圖售價'};
     if(matches.some(r=>r.price!==matches[0].price))return {price:null,status:'missing',source:matches.map(r=>r.source).join('；'),method:'參照售價衝突，待確認'};
-    return {price:matches[0].price,status:'estimated',source:matches[0].source,method:`參考${reference.referencePool}第${reference.referenceTier}階截圖售價`};
+    return {price:matches[0].price,status:reference.confirmed?'confirmed':'estimated',source:matches[0].source,method:reference.confirmed?`使用者確認：比照${reference.referencePool}第${reference.referenceTier}階售價（${reference.confirmedAt}）`:`參考${reference.referencePool}第${reference.referenceTier}階截圖售價`};
   }
   if(pool==='混池復刻池')return {price:null,status:'missing',source:'',method:'混池復刻池地區售價待確認'};
   // 未指定參照階級的舊資料（如協會補給）沿用混池價位估算。
