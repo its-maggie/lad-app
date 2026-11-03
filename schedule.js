@@ -3,16 +3,17 @@
    預測來源：排期預測1007.jpg，並納入 2026-10-24 最新排期推算。
    未確認排期參考圖片與後續調整；10/11–10/18 沈星回生日與生日復刻已確認。
    10/19–10/27 半透明侵占復刻、10/21–12/18 夏以晝／沈星回新密約已確認。
-   11/13–12/1 混池與秦徹分線分列，保留類型與角色篩選。
+   11/6–11/24 待異夢重啟已確認；11/13–12/1 秦徹分線仍屬預測。
    10/27–11/5 祁煜單人月卡已確認；12/3 起沈星回日卡3.0 仍屬預測。
    11/8–11/18 雙十一周邊返場已確認。
+   秦徹熾光淋漓復刻預測調整至 11/23–11/30。
    2027 年日卡、月卡、混池、生日與復刻日期皆為預測，整理至 7/26。
    生日池預測修正為祁煜 3/1–3/7、秦徹 4/13–4/19、夏以晝 6/8–6/14。
    注意：tentative 為 true 的項目屬預測資料，日期及內容皆可能變動。
    ============================================================= */
 
 window.SCHEDULE_META = {
-  updated: "2026-11-02",
+  updated: "2026-11-03",
   label: "排期整理",
   forecastSource: "排期預測1007.jpg、2026-10-24 排期推算（至 2027-07）"
 };
@@ -33,10 +34,10 @@ window.SCHEDULE = [
   { name: "半透明侵占復刻",             type: "rerun",   start: "2026-10-19", end: "2026-10-27", tentative: false, leads: ["沈星回", "黎深", "祁煜", "秦徹"] },
   { name: "新密約・夏以晝／沈星回",     type: "pass",    start: "2026-10-21", end: "2026-12-18", tentative: false, leads: ["夏以晝", "沈星回"] },
   { name: "祁煜單人月卡",               type: "monthly", start: "2026-10-27", end: "2026-11-05", tentative: false, leads: ["祁煜"] },
-  { name: "秦徹熾光淋漓復刻",           type: "rerun",   start: "2026-11-04", end: "2026-11-11", tentative: true,  leads: ["秦徹"] },
+  { name: "待異夢重啟",                 type: "mixed",   start: "2026-11-06", end: "2026-11-24", tentative: false, leads: ["沈星回", "黎深", "祁煜", "秦徹", "夏以晝"] },
   { name: "雙十一周邊返場",             type: "merch",   start: "2026-11-08", end: "2026-11-18", tentative: false, leads: [] },
-  { name: "新混池6",                    type: "mixed",   start: "2026-11-13", end: "2026-12-01", tentative: true,  leads: ["沈星回", "黎深", "祁煜", "秦徹", "夏以晝"] },
   { name: "秦徹分線",                   type: "story",   start: "2026-11-13", end: "2026-12-01", tentative: true,  leads: ["秦徹"] },
+  { name: "秦徹熾光淋漓復刻",           type: "rerun",   start: "2026-11-23", end: "2026-11-30", tentative: true,  leads: ["秦徹"] },
   { name: "黎深脈脈傾音復刻",           type: "rerun",   start: "2026-11-24", end: "2026-12-01", tentative: true,  leads: ["黎深"] },
   { name: "沈星回日卡3.0",              type: "daily",   start: "2026-12-03", end: "2026-12-17", tentative: true,  leads: ["沈星回"] },
   { name: "遵命飼養官復刻",             type: "rerun",   start: "2026-12-14", end: "2026-12-22", tentative: true,  leads: ["沈星回", "黎深", "祁煜", "秦徹"] },
