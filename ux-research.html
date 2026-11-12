@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#2d2347">
   <title>深空省省｜產品定位與 UX Research</title>
-  <meta name="description" content="深空省省的產品定位、User Journey、Proto-persona、JTBD 與 UX Research 計畫。">
+  <meta name="description" content="深空省省的產品定位、18 筆問卷回饋分析、網頁與 App 功能現況、User Journey 與下一輪 UX Research 計畫。">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -47,7 +47,7 @@
     ul{margin:12px 0 0;padding-left:1.2em}
     li+li{margin-top:7px}
     .tag{display:inline-flex;border-radius:999px;background:var(--lavender);color:var(--purple-dark);padding:5px 11px;font-size:11px;font-weight:700;margin-bottom:18px}
-    .journey{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;counter-reset:step;margin-top:34px}
+    .journey{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;counter-reset:step;margin-top:34px}
     .step{position:relative;background:white;border:1px solid var(--line);border-radius:20px;padding:24px 20px;min-height:245px}
     .step:before{counter-increment:step;content:"0" counter(step);font-family:"Cormorant Garamond",serif;font-size:35px;color:var(--purple);display:block;margin-bottom:25px}
     .step:not(:last-child):after{content:"→";position:absolute;right:-18px;top:30px;z-index:2;width:24px;height:24px;border-radius:50%;background:var(--purple-dark);color:white;display:grid;place-items:center;font-size:13px}
@@ -71,6 +71,8 @@
     th{color:var(--purple-dark);background:#f7f3fc;font-size:12px;letter-spacing:.04em}
     tr:last-child td{border-bottom:0}
     .priority{font-weight:700;color:var(--purple-dark)}
+    caption{text-align:left;padding:18px;color:var(--muted);font-size:13px}
+    .research-note{margin:22px 0;padding:20px 24px;border-left:4px solid var(--purple);background:white;border-radius:0 16px 16px 0;font-size:14px;color:var(--muted)}
     .metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
     .metric{background:white;border:1px solid var(--line);border-radius:18px;padding:20px}
     .metric b{display:block;font-family:"Cormorant Garamond",serif;font-size:30px;color:var(--purple-dark)}
@@ -98,24 +100,24 @@
       <div>
         <div class="eyebrow">Product Strategy · UX Research</div>
         <h1>把想抽的心情，<br>變成有把握的計畫。</h1>
-        <p class="lead">深空省省的產品定位、核心旅程與研究框架。這份文件記錄目前已知的使用情境，也標出下一步需要透過研究驗證的假設。</p>
+        <p class="lead">依 18 筆玩家問卷回覆更新產品定位與核心旅程，並補上 App 已實作的五星追蹤。研究重點轉向：玩家能否看懂目前狀態，並把追蹤結果用於下一次規劃。</p>
       </div>
-      <div class="meta">研究文件版本<b>v1.1 · 2026.09.10</b><br>資料基礎<b>產品功能＋創作者 User Journey</b></div>
+      <div class="meta">研究文件版本<b>v1.2 · 2026.11.12</b><br>資料基礎<b>18 筆玩家回覆＋兩版原始碼</b><br>最新問卷回覆<b>2026.10.24</b></div>
     </div>
 
     <section>
       <div class="shell">
         <div class="section-label">01 · Positioning</div>
         <h2>產品定位</h2>
-        <p class="intro">不是一般記帳 App，也不只是攻略資料庫；深空省省的核心價值，是把分散資訊轉換成針對玩家個人的抽卡決策。</p>
+        <p class="intro">深空省省把排期、持有資源、禮包售價與預算放在同一條決策流程中，協助玩家依自己的目標規劃抽卡。</p>
         <div class="position">
-          <blockquote>專為《戀與深空》中小課玩家設計的抽卡資源與課金決策工具。</blockquote>
-          <p>以排期為起點、抽卡目標為核心，整合持有資源、官方贈券、禮包 CP 值與每月預算，回答「抽不抽得起、還差多少、怎麼買最省」。</p>
+          <blockquote>協助《戀與深空》玩家規劃抽卡資源、控制預算，並回顧抽卡結果。</blockquote>
+          <p>網頁版提供排期、換算、禮包試算與記帳；App 另有多活動規劃與五星追蹤，將目前累計與保證狀態接回下一次換算。</p>
         </div>
         <div class="grid">
-          <article class="card"><span class="tag">目標使用者</span><h3>資源有限，但目標明確</h3><p>有固定推角、會提前存鑽，並願意為喜歡的卡池進行小額至中額消費的玩家。</p></article>
+          <article class="card"><span class="tag">目標使用者</span><h3>需要分配資源的玩家</h3><p>包含無課與有消費的玩家。18 筆回覆中有 4 筆自述最近 30 天未課金；是否有固定推角、如何分配資源，仍需訪談確認。</p></article>
           <article class="card"><span class="tag">核心需求</span><h3>降低不確定與後悔</h3><p>在密集排期與複雜禮包間，快速確認資源缺口、儲蓄時間與最低成本。</p></article>
-          <article class="card"><span class="tag">差異化</span><h3>從資料走到個人答案</h3><p>串起日曆、換算、禮包推薦和預算，而不是讓玩家自行對照多張表格。</p></article>
+          <article class="card"><span class="tag">產品價值</span><h3>把規劃接上實際狀態</h3><p>用剩餘金券、所在地售價與每月預算做決策；App 可再依實際抽卡紀錄調整下一次目標。</p></article>
         </div>
       </div>
     </section>
@@ -124,12 +126,13 @@
       <div class="shell">
         <div class="section-label">02 · Journey</div>
         <h2>核心 User Journey</h2>
-        <p class="intro">這條旅程來自創作者提供的實際預期使用方式。它橫跨活動前的規劃、活動當天的購買決策，以及購買後的財務紀錄。</p>
+        <p class="intro">這是依創作者 Journey、問卷線索與現有功能整理的任務流程，尚未經完整觀察驗證。玩家可能在活動中途加入，也可能只查排期，不一定走完每一步。</p>
         <div class="journey">
           <article class="step"><h3>掌握最近排程</h3><p>獵人小姐進入產品，首先看到日曆，快速理解近期有哪些卡池與活動。</p><div class="moment">產品接觸點：排程 Tab</div></article>
           <article class="step"><h3>計算資源缺口</h3><p>切換到換算，輸入目前持有鑽石、剩餘金券與接下來的目標抽數。活動已開始時，可調整官方贈券的可用張數，了解還需要存多少鑽。</p><div class="moment">產品接觸點：換算 Tab</div></article>
           <article class="step"><h3>選擇最省禮包</h3><p>活動當天再次確認缺口，查看需要買到哪一檔禮包最划算。</p><div class="moment">關鍵決策點：禮包推薦</div></article>
-          <article class="step"><h3>完成消費紀錄</h3><p>購買後到預算頁記帳，確認本月支出與剩餘可花金額。</p><div class="moment">產品接觸點：預算 Tab</div></article>
+          <article class="step"><h3>完成消費紀錄</h3><p>將已選禮包帶入記帳，核對幣別與實付金額後儲存，確認本月支出。</p><div class="moment">網頁：預算 · App：錢包</div></article>
+          <article class="step"><h3>追蹤並重新規劃</h3><p>在 App 手動更新目前累計、保證狀態與五星結果，再將目標抽數帶入換算，規劃下一次資源。</p><div class="moment">App：追蹤 → 換算</div></article>
         </div>
       </div>
     </section>
@@ -138,15 +141,15 @@
       <div class="shell">
         <div class="section-label">03 · Proto-persona</div>
         <h2>獵人小姐</h2>
-        <p class="intro">這是依現有 Journey 建立的 Proto-persona，不等同經過訪談驗證的 Persona。刻意不虛構年齡、職業與收入，避免過早限縮設計方向。</p>
+        <p class="intro">這是依 Journey 與問卷主題整理的 Proto-persona，尚未經訪談驗證。問卷提供任務線索，無法確認同一位玩家的完整行為，也不以年齡或消費金額推定動機。</p>
         <div class="status"><span class="known">綠色＝目前已知</span><span class="assumed">黃色＝待研究驗證</span></div>
         <div class="persona">
-          <aside class="quote"><div class="avatar" aria-hidden="true">獵</div><blockquote>「我願意為喜歡的卡花錢，但想先知道要存多少、怎麼買才不會後悔。」</blockquote></aside>
+          <aside class="quote"><div class="avatar" aria-hidden="true">獵</div><blockquote>想先知道手上的資源夠不夠，再決定要存多少、是否需要買禮包。</blockquote><p>依任務整理的情境句，非玩家原話。</p></aside>
           <div class="persona-detail">
-            <article class="card"><span class="tag">已知行為</span><h3>她會做什麼</h3><ul><li>主動查看近期排期</li><li>在活動前計算存鑽缺口</li><li>活動當天比較禮包檔位</li><li>消費後記錄本月花費</li></ul></article>
+            <article class="card"><span class="tag">任務線索</span><h3>她可能來做什麼</h3><ul><li>查近期排期與男主篩選</li><li>計算抽卡目標與存鑽缺口</li><li>用所在地幣別管理支出</li><li>補上已使用的金券與許願次數</li></ul></article>
             <article class="card"><span class="tag">核心動機</span><h3>她想得到什麼</h3><ul><li>確保喜歡的卡池有足夠資源</li><li>在有限預算中取得更高價值</li><li>減少臨時課金與買錯禮包</li><li>保留下一個卡池的安全感</li></ul></article>
             <article class="card"><span class="tag">推定痛點</span><h3>現在為何困難</h3><ul><li>排期與官方情報散落各處</li><li>贈券、返券規則增加心算負擔</li><li>禮包階級與限購組合複雜</li><li>抽卡情緒容易蓋過預算判斷</li></ul></article>
-            <article class="card"><span class="tag">待驗證假設</span><h3>我們還不知道</h3><ul><li>她多久規劃一次、何時回訪</li><li>最信任哪一種排期來源</li><li>推薦結果需要多透明才敢採用</li><li>是否願意持續手動記帳</li></ul></article>
+            <article class="card"><span class="tag">待驗證假設</span><h3>我們還不知道</h3><ul><li>她多久規劃一次、何時回訪</li><li>能否正確辨認官方與預測</li><li>推薦結果需要哪些說明才敢採用</li><li>是否願意持續手動記帳與追蹤</li></ul></article>
           </div>
         </div>
         <h3 style="margin-top:42px;font-size:24px">由回饋形成的三種行為型 Persona</h3>
@@ -171,30 +174,30 @@
           <article class="card">
             <span class="tag">活動後 · 結果回顧</span>
             <h3>抽卡追蹤者</h3>
-            <p>她不只記花費，也想知道實際用了多少抽、鑽石與券，並觀察自己近期的歐非變化。</p>
-            <div class="fact"><b>主要任務</b><span>記錄實際抽數、資源組成、出金結果與卡池成本</span></div>
-            <div class="fact"><b>成功時刻</b><span>能比較不同卡池的實際結果，不必靠印象判斷</span></div>
-            <div class="fact"><b>研究假設</b><span>結果回顧可能提升長期回訪，但需要先驗證記錄負擔</span></div>
+            <p>問卷出現補上已許願次數的需求。App 已可手動維護累計、保證狀態與五星紀錄；這類玩家是否會持續記錄，仍待驗證。</p>
+            <div class="fact"><b>主要任務</b><span>分開維護新池／復刻／常駐計數線，記錄五星抽數與結果，再帶入換算</span></div>
+            <div class="fact"><b>成功時刻</b><span>能說明目前累計、保證狀態與下一次目標抽數的關係</span></div>
+            <div class="fact"><b>研究假設</b><span>追蹤可能減少重算負擔；記錄成本、統計理解與回訪效果尚未量測</span></div>
           </article>
         </div>
-        <div class="status"><span class="known">回饋支持：剩餘鑽、剩餘官方金券、月份、日期、總花費</span><span class="assumed">下一階段驗證：實際抽數與歐非追蹤</span></div>
+        <div class="status"><span class="known">已實作：App 五星紀錄、累計／保證校正、統計與帶入換算</span><span class="assumed">待驗證：記錄負擔、保底與統計理解、持續使用</span></div>
         <article class="card" style="margin-top:24px">
-          <span class="tag">2026/10/7 · 真實使用者回饋</span>
+          <span class="tag">問卷主題 · 活動中途加入</span>
           <h3>活動進行中才開始使用的玩家</h3>
           <p>一位首次使用者透過社群貼文找到工具時，已經用過官方贈券。原本固定帶入完整贈券數，讓試算高估可用抽數；她需要依目前剩餘張數重新計算缺口。</p>
           <div class="fact"><b>Persona 補充</b><span>「禮包精算者」可能在活動開始後才進入工具；規劃起點包含已消耗部分資源的狀態。</span></div>
           <div class="fact"><b>主要需求</b><span>可修改剩餘官方金券，讓缺口、禮包建議與剩餘鑽一致更新；需要時能恢復自動估算或重設試算。</span></div>
           <div class="fact"><b>成功時刻</b><span>不必自行心算扣掉已用贈券，就能以手上資源規劃接下來的抽數。</span></div>
-          <div class="fact"><b>待驗證</b><span>此情境的普遍程度，以及玩家如何區分剩餘贈券與後續返券；目前依據是一則回饋，不代表所有玩家。</span></div>
+          <div class="fact"><b>目前狀態與待驗證</b><span>兩版均已有官方金券手動調整與恢復自動。需測試玩家能否區分剩餘贈券與後續返券，以及是否發生重複計入。</span></div>
         </article>
         <article class="card" style="margin-top:24px">
-          <span class="tag">2026/10/7 · 香港及馬來西亞玩家回饋</span>
+          <span class="tag">問卷主題 · 地區幣別</span>
           <h3>以所在地價格規劃課金的玩家</h3>
-          <p>香港及馬來西亞玩家希望用自己的幣別查看禮包價格。她們購買的內容物相同，但商店售價不同，只看新台幣金額無法直接判斷實際支出。</p>
+          <p>3 筆回覆提出港幣或馬幣需求，其中包含錢包記帳。由此延伸的設計情境是：從所在地禮包售價到實際記帳，都應保留玩家使用的幣別。</p>
           <div class="fact"><b>Persona 補充</b><span>「禮包精算者」的需求也受商店地區與幣別影響；相同抽數需要以所在地的實際價格規劃。</span></div>
           <div class="fact"><b>主要需求</b><span>切換新台幣、港幣或馬來西亞令吉，查看各階價格、單抽成本及購買合計，並清楚辨認實價與推估價。</span></div>
           <div class="fact"><b>成功時刻</b><span>不用自行換算，就能看懂遊戲中要付多少錢；記帳時也不會把不同幣別加在一起。</span></div>
-          <div class="fact"><b>待驗證</b><span>其他卡池的實價、iOS 與 Android 的定價差異，以及地區價格調整的頻率。先依玩家提供的資料逐步補齊。</span></div>
+          <div class="fact"><b>目前狀態與待驗證</b><span>兩版均支援新台幣、港幣與馬幣，並分開記帳。需確認實價／推估價是否清楚，以及禮包帶入錢包時能否保留正確幣別。</span></div>
         </article>
       </div>
     </section>
@@ -205,7 +208,7 @@
         <h2>使用者真正雇用它做什麼</h2>
         <div class="jtbd">當我看到喜歡角色的卡池即將到來時，我想快速知道現有資源是否足夠，以及不足時最省的補足方式，讓我能安心做出抽卡與課金決定，又不影響下一個目標。</div>
         <div class="grid">
-          <article class="card"><h3>功能性工作</h3><p>查排期、算資源、找禮包、記花費。</p></article>
+          <article class="card"><h3>功能性工作</h3><p>查排期、算資源、找禮包、記花費；在 App 記錄五星結果，再調整下一次目標。</p></article>
           <article class="card"><h3>情緒性工作</h3><p>降低錯過、抽不到與超支的不安，增加「我有準備」的掌控感。</p></article>
           <article class="card"><h3>社會性工作</h3><p>做一個有規劃、懂得精算，而不是盲目衝動課金的玩家。</p></article>
         </div>
@@ -214,42 +217,78 @@
 
     <section>
       <div class="shell">
-        <div class="section-label">05 · Opportunities</div>
-        <h2>Journey 對產品設計的啟示</h2>
-        <div class="table-wrap">
+        <div class="section-label">05 · Feedback Evidence</div>
+        <h2>目前的回饋告訴我們什麼</h2>
+        <p class="intro">2026 年 11 月 12 日讀取「表單回覆 1」，共 19 筆提交；排除 1 筆明確標記的串接測試，納入 9 月 21 日至 10 月 24 日的 18 筆玩家回覆。這是自願填答的回覆筆數，未確認為 18 位不同玩家，也未記錄各筆使用的是網頁或 App。</p>
+        <p><a href="https://docs.google.com/spreadsheets/d/1b9kafD-DF2tCByzzkIdgvD2PHv6axCzz4jTU2LEpA7U/edit?gid=1081149252#gid=1081149252" target="_blank" rel="noopener noreferrer">查看問卷來源（需存取權限）↗</a></p>
+        <div class="metrics">
+          <div class="metric"><b>14 / 18</b><span>自述第一次使用，另 4 筆為回訪</span></div>
+          <div class="metric"><b>8 / 18</b><span>主要查排期；7 筆主要做抽卡／存鑽換算</span></div>
+          <div class="metric"><b>5 / 17</b><span>看過排期的回覆中，自述不太或完全分不清官方／預測</span></div>
+          <div class="metric"><b>8 / 18</b><span>尚無法評價整體好用程度</span></div>
+        </div>
+        <div class="table-wrap" style="margin-top:24px">
           <table>
-            <thead><tr><th>旅程階段</th><th>使用者問題</th><th>設計機會</th><th>優先度</th></tr></thead>
+            <caption>各題分開計算有效回答；未使用、無法判斷不編成分數。</caption>
+            <thead><tr><th scope="col">研究訊號</th><th scope="col">目前結果</th><th scope="col">可以如何解讀</th></tr></thead>
             <tbody>
-              <tr><td>查看排程</td><td>近期有哪些池？哪些是官方、哪些是預測？</td><td>明確標示資料可信度，並允許從卡池直接開始規劃。</td><td class="priority">P0</td></tr>
-              <tr><td>計算缺口</td><td>我要存到什麼時候？下一池要留多少？</td><td>保留跨 Tab 的卡池與目標，直接呈現達標日期與安全預留。</td><td class="priority">P0</td></tr>
-              <tr><td>選擇禮包</td><td>推薦真的最省嗎？為什麼是這一檔？</td><td>顯示推薦依據、總成本、可得抽數與替代方案，建立信任。</td><td class="priority">P0</td></tr>
-              <tr><td>完成記帳</td><td>還要重新輸入剛才買的內容嗎？</td><td>在推薦結果提供「已購買並記帳」，自動帶入金額、分類與卡池。</td><td class="priority">P1</td></tr>
-              <tr><td>持續規劃</td><td>這次花費會不會影響下一池？</td><td>建立多卡池計畫，讓資源分配與預算影響可被預覽。</td><td class="priority">P1</td></tr>
+              <tr><td>最近一次任務</td><td>排期 8；換算 7；記帳 2；自填多功能 1，共 18 筆。</td><td>排期與換算是本次樣本主要入口；多功能回答保留原分類，不拆成多位使用者。</td></tr>
+              <tr><td>自述完成情況</td><td>獨立完成 5；需協助完成 1；部分完成 4；只是逛逛 8。</td><td>依 Q3 排除逛逛後為 5／10 獨立完成；Q2／Q3 有 8 筆任務表述不一致，保留註記，不能當成觀察完成率。</td></tr>
+              <tr><td>主觀評價與信任</td><td>整體評價有效 10 筆，皆為 4–5 分；換算 4–5 分為 7／11；禮包為 8／12。</td><td>整體評價另有 8 筆無法判斷，換算 7 筆未使用，禮包 6 筆未使用。高分不能取代新手測試。</td></tr>
+              <tr><td>官方／預測辨識</td><td>清楚 5；大致 7；不太清楚 3；完全分不清 2；未看過 1。</td><td>優先以實際排期測辨識，尚無正確率資料。</td></tr>
+              <tr><td>回訪意圖</td><td>一定會 7；可能會 9；未確定 2。</td><td>16／18 表達正向意圖，尚未量測實際留存或追蹤功能的回訪效果。</td></tr>
             </tbody>
           </table>
         </div>
-      </div>
-    </section>
-
-    <section>
-      <div class="shell">
-        <div class="section-label">06 · Research Plan</div>
-        <h2>下一輪 UX Research</h2>
-        <p class="intro">先用 5–7 位符合目標輪廓的玩家做半結構訪談與任務測試，目的不是證明產品好用，而是找出她們原本如何規劃，以及在哪裡失去信心。</p>
         <div class="grid">
-          <article class="card"><span class="tag">訪談問題</span><ul><li>最近一次為卡池存鑽的過程是什麼？</li><li>你用了哪些資訊、表格或計算方式？</li><li>什麼情況會讓你臨時改變課金決定？</li><li>買完後會記錄支出嗎？為什麼？</li></ul></article>
-          <article class="card"><span class="tag">任務測試</span><ul><li>找出下一個想抽的卡池</li><li>設定 70 抽並預留下一池資源</li><li>說出還差多少鑽與最省方案</li><li>模擬購買後完成一筆記帳</li></ul></article>
-          <article class="card"><span class="tag">觀察重點</span><ul><li>是否理解預測與官方排程差異</li><li>是否信任換算及推薦結果</li><li>跨 Tab 時是否失去上下文</li><li>何處需要反覆確認或自行心算</li></ul></article>
+          <article class="card"><span class="tag">改善優先序 · 開放回答</span><h3>先處理影響決策的資訊</h3><p>4 筆優先改善排期資訊；3 筆要求港幣／馬幣；2 筆選記帳管理；1 筆選換算說明；1 筆提 MyCard；7 筆無特別想改善。另有 3 筆具體文字談金券、返券或已許願次數，主題可重疊。</p></article>
+          <article class="card"><span class="tag">資料品質</span><h3>保留不一致與空白</h3><p>8 筆雖選了主要任務，完成題卻選「只是逛逛」。4 筆填寫具體經驗欄，其中 1 筆僅填「無」；不把空白或「無」當成沒有遇到問題。</p></article>
+          <article class="card"><span class="tag">研究限制</span><h3>功能現況另行核對</h3><p>問卷沒有平台、App 版本或追蹤專題，不能判定追蹤功能的滿意度。以下「已實作」依本機原始碼確認，使用效果仍需任務測試。</p></article>
         </div>
       </div>
     </section>
 
     <section>
       <div class="shell">
-        <div class="section-label">Survey · 2026.09.10 v2</div>
+        <div class="section-label">06 · Opportunities</div>
+        <h2>Journey 對產品設計的啟示</h2>
+        <p class="intro">功能狀態以 2026 年 11 月 12 日兩版原始碼為準。優先度是依決策影響與回饋整理的研究安排，並非問卷投票排名，也不代表功能已完成可用性驗收。</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th scope="col">旅程／回饋</th><th scope="col">目前功能狀態</th><th scope="col">下一步研究或改善</th><th scope="col">優先度</th></tr></thead>
+            <tbody>
+              <tr><td>查看排程<br>4 筆優先改善資訊；5 筆辨識困難</td><td>兩版均標示官方／預測；App 可從排期帶入規劃。</td><td>請玩家指出一筆官方與一筆預測，說出判斷依據；再確認更新日期與來源是否易找。</td><td class="priority">P0</td></tr>
+              <tr><td>活動中途計算缺口<br>金券、返券與已許願次數</td><td>兩版可手動調整官方金券、恢復自動並預留資源；App 有追蹤目標帶入。</td><td>用「部分贈券已使用」情境檢查目標抽數、持有券與後續返券的理解，找出重複計算。</td><td class="priority">P0</td></tr>
+              <tr><td>選禮包與記帳<br>3 筆地區幣別需求</td><td>兩版支援 TWD／HKD／MYR、實價／推估標示與禮包帶入錢包；記帳仍需確認儲存。</td><td>核對所在地售價、手動包數、帶入金額與幣別；測試玩家能否理解推薦限制。</td><td class="priority">P0</td></tr>
+              <tr><td>抽卡後追蹤<br>已許願次數需求</td><td>App 已有三條累計線、五星紀錄、保證校正、篩選統計與 CSV 匯出；原 HTML 網頁版尚無追蹤頁。</td><td>驗證新增／修正紀錄、重設累計與帶入換算。平均出金抽數及 UP 率只描述手動紀錄，不代表未來機率。</td><td class="priority">P1</td></tr>
+              <tr><td>跨卡池規劃</td><td>App 已有多活動規劃與進度校正；網頁版可先預留下一池資源。</td><td>觀察本次結果如何改變下一池計畫，確認切頁時是否保留上下文。</td><td class="priority">P1</td></tr>
+              <tr><td>其他省錢方式<br>1 筆提 MyCard</td><td>目前未見 MyCard 購點換算功能。</td><td>先確認使用情境、適用地區與價格來源，再評估是否納入產品。</td><td class="priority">P2</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="research-note">App 追蹤目前保存手動輸入的五星抽數、結果、日期與思念名稱，沒有逐抽鑽石／券耗用或實付成本明細。不能將這次功能盤點寫成已完成資源組成、卡池成本或「歐非預測」分析。</p>
+      </div>
+    </section>
+
+    <section>
+      <div class="shell">
+        <div class="section-label">07 · Research Plan</div>
+        <h2>下一輪 UX Research</h2>
+        <p class="intro">招募 5–7 位玩家進行半結構訪談與任務測試，涵蓋首次／回訪、活動中途加入、港幣／馬幣記帳與 App 追蹤使用情境。依各自的平台安排任務，不要求每位玩家都用過全部功能。</p>
+        <div class="grid">
+          <article class="card"><span class="tag">訪談問題</span><ul><li>最近一次在哪個階段開始規劃？</li><li>已用贈券、返券與剩餘目標怎麼算？</li><li>所在地售價與實付金額怎麼確認？</li><li>抽完後原本記什麼？為何中斷記錄？</li></ul></article>
+          <article class="card"><span class="tag">任務測試</span><ul><li>辨認一筆官方與一筆預測排期</li><li>調整已用贈券，說出剩餘缺口</li><li>以所在地幣別選包並確認記帳</li><li>在 App 新增五星、校正累計與保證，再帶入換算</li></ul></article>
+          <article class="card"><span class="tag">觀察重點</span><ul><li>首次使用能否找到下一步</li><li>是否混淆目前累計與五星出現抽數</li><li>能否解釋保守目標及統計分母</li><li>跨頁是否重填、記錄是否有負擔</li></ul></article>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="shell">
+        <div class="section-label">Survey · v2 現況與下版規劃</div>
         <h2>把使用回饋接上研究問題</h2>
         <p class="intro">站內問卷以最近一次使用經驗為主，約 3 分鐘。先問想完成的任務與完成情況，再問資訊辨識、結果信任及改善優先序；年齡與最近 30 天的遊戲內消費皆為選填，用來描述樣本，不以年齡直接推定玩家行為。</p>
-        <p><a href="https://docs.google.com/forms/d/e/1FAIpQLSfyHTsrjN9MY36J2Fw8X3JaRB0ecuRKOuozsbm-BE9NdUAjfA/viewform" target="_blank" rel="noopener noreferrer">開啟使用回饋問卷 ↗</a> · <a href="docs/questionnaire-v2.md">題目與分析說明</a></p>
+        <p><a href="https://docs.google.com/forms/d/e/1FAIpQLSfyHTsrjN9MY36J2Fw8X3JaRB0ecuRKOuozsbm-BE9NdUAjfA/viewform" target="_blank" rel="noopener noreferrer">開啟使用回饋問卷 ↗</a> · <a href="https://github.com/its-maggie/lad-app/blob/main/docs/questionnaire-v2.md" target="_blank" rel="noopener noreferrer">題目與分析說明 ↗</a></p>
         <div class="table-wrap">
           <table>
             <thead><tr><th>研究問題</th><th>問卷題目</th><th>如何使用結果</th></tr></thead>
@@ -259,11 +298,12 @@
               <tr><td>排期來源是否清楚？結果能否被信任？</td><td>Q5 官方／預測辨識、Q6 換算信任、Q7 禮包試算信任</td><td>兩種結果分開分析；「未使用／無法判斷」不計入分數。來源辨識還需用實際排期測試。</td></tr>
               <tr><td>是否有持續使用的理由？</td><td>Q9 回訪意圖、Q10 具體經驗</td><td>用於探索回訪理由，不能當作實際留存率。</td></tr>
               <tr><td>目前收到哪些玩家的回覆？</td><td>Q11 年齡層、Q12 最近 30 天遊戲內消費</td><td>描述樣本組成；不把未填或不方便透露當成零消費，也不依年齡替玩家貼標籤。</td></tr>
+              <tr><td>App 追蹤是否好用？</td><td>目前 v2 未詢問平台、版本與追蹤任務。</td><td>下版再規劃平台、是否用過追蹤、主要任務與卡點，保留未使用選項；目前不能據此評估追蹤成效。</td></tr>
             </tbody>
           </table>
         </div>
         <div class="grid">
-          <article class="card"><span class="tag">資料用途</span><h3>先告知，再收集</h3><p>新版說明網站改善與 UX 研究用途，可能以匿名彙整方式呈現在作品集或報告，不公開個別回答。不收集姓名與 Email，年齡及消費可略過。</p></article>
+          <article class="card"><span class="tag">資料用途</span><h3>依原告知用途整理</h3><p>依問卷規格中的網站改善告知使用回饋。本頁僅呈現彙整與主題轉述，不公開逐筆資料、個別原話或人口資料交叉表；其他對外研究用途需另確認。</p></article>
           <article class="card"><span class="tag">版本管理</span><h3>保留改版前後的差異</h3><p>v1 原說明僅供網站功能改善，不追溯擴大用途。v2 將「最常使用功能」改成「最近一次任務」；分析時保留版本及題目文字，不直接合併成同一指標。</p></article>
           <article class="card"><span class="tag">研究限制</span><h3>用任務測試補足自述</h3><p>問卷由站內玩家自願填寫，不能代表所有玩家。自述完成率不等於觀察完成率；操作時間與跨頁卡點仍以 5–7 位玩家的任務測試量測。小樣本報告人數，不過度解讀比例。</p></article>
         </div>
@@ -272,18 +312,18 @@
 
     <section>
       <div class="shell">
-        <div class="section-label">07 · Success Metrics</div>
+        <div class="section-label">08 · Success Metrics</div>
         <h2>驗證產品是否真的有幫助</h2>
         <div class="metrics">
-          <div class="metric"><b>完成率</b><span>能否獨立完成「看排期 → 算缺口 → 選禮包 → 記帳」</span></div>
+          <div class="metric"><b>任務完成</b><span>分別記錄規劃／記帳及 App 追蹤 → 換算的獨立完成、協助與失敗</span></div>
           <div class="metric"><b>決策時間</b><span>從選定卡池到說出可執行方案所需時間</span></div>
-          <div class="metric"><b>信心分數</b><span>使用者對換算及禮包推薦結果的信任程度</span></div>
-          <div class="metric"><b>回訪意圖</b><span>下次活動前是否願意再次使用，以及原因</span></div>
+          <div class="metric"><b>理解程度</b><span>能否解釋官方／預測、贈券／返券、保底目標與手動統計</span></div>
+          <div class="metric"><b>持續記錄</b><span>後續研究觀察下一次活動是否繼續記帳與追蹤；目前只有回訪意圖</span></div>
         </div>
       </div>
     </section>
   </main>
 
-  <footer><div class="shell">深空省省 UX Research Repository · 目前內容包含創作者提供的 Journey 與由產品功能推導的研究假設；Persona 尚待真實使用者研究驗證。</div></footer>
+  <footer><div class="shell">深空省省 UX Research Repository · 更新於 2026.11.12。依 18 筆問卷回覆與兩版原始碼整理；Persona、功能理解與持續使用效果仍待訪談及任務測試驗證。</div></footer>
 </body>
 </html>
