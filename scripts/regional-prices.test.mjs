@@ -8,6 +8,30 @@ function load(){
   for(const file of ['regional-prices.js','packs.js'])vm.runInContext(fs.readFileSync(new URL(`../${file}`,import.meta.url),'utf8'),ctx);
   return ctx.window;
 }
+test('subscription costs use each region’s pass price and exclude gifted crystals',()=>{
+  const w=load();
+  for(const [currency,prices,pulls] of [['TWD',[150,220],[20,7]],['HKD',[38,58],[20,7]],['MYR',[22.9,34.9],[20,7]]]){
+    const costs=w.getSubscriptionCosts(currency);
+    assert.deepEqual(Array.from(costs,pack=>pack.price),prices);
+    costs.forEach((pack,i)=>{
+      assert.equal(pack.perPull,prices[i]/pulls[i]);
+      assert.equal(pack.priceStatus,'confirmed');
+      if(currency!=='TWD')assert.match(pack.priceSource,/月卡&週卡/);
+    });
+  }
+  assert.equal(w.formatMoney(w.getSubscriptionCosts('HKD')[0].perPull,'HKD'),'HK$1.9');
+  assert.equal(w.formatMoney(w.getSubscriptionCosts('MYR')[0].perPull,'MYR'),'RM1.15');
+});
+test('missing or conflicting subscription prices stay unknown without borrowing a local price',()=>{
+  const w=load();
+  w.REGIONAL_SUBSCRIPTION_PRICES=w.REGIONAL_SUBSCRIPTION_PRICES.filter(row=>!(row.tier==='週卡'&&row.currency==='MYR'));
+  assert.equal(w.getSubscriptionCosts('MYR')[1].price,null);
+  assert.equal(w.getSubscriptionCosts('MYR')[1].perPull,null);
+  w.REGIONAL_SUBSCRIPTION_PRICES.push({tier:'月卡',currency:'HKD',price:39,source:'conflict'});
+  assert.equal(w.getSubscriptionCosts('HKD')[0].price,null);
+  assert.equal(w.getSubscriptionCosts('HKD')[0].priceStatus,'missing');
+  assert.ok(w.getSubscriptionCosts('USD').every(pack=>pack.price===null));
+});
 test('regional screenshot prices stay confirmed when other pools reference them',()=>{
   const w=load();
   for(const [pool,code,prices] of [
