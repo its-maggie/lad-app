@@ -49,6 +49,18 @@ test('page JavaScript parses and automatic returns exclude the target milestone 
   assert.equal(get('officialTickets').value, 10);
 });
 
+test('weekly passes use regional evidence in both the reference and other-pack list',()=>{
+  const {context,get}=mount({calc:{pool:'其他'}});
+  context.setPackCurrency('HKD');
+  assert.match(get('subscriptionCosts').innerHTML,/HK\$8\.29/);
+  assert.match(get('packTable').innerHTML,/HK\$58/);
+  assert.doesNotMatch(get('packTable').innerHTML,/HK\$220/);
+  assert.match(get('packTable').innerHTML,/待確認/);
+  context.setPackCurrency('MYR');
+  assert.match(get('subscriptionCosts').innerHTML,/RM4\.99/);
+  assert.match(get('packTable').innerHTML,/RM34\.9/);
+});
+
 test('monthly rerun returns become usable after milestones and cap at twenty tickets',()=>{
   const {context}=mount();
   for(const [target,expected] of [[0,0],[10,0],[11,1],[12,2],[20,2],[21,3],[22,4],[30,4],[32,6],[40,6],[42,8],[50,8],[52,10],[75,10],[76,11],[80,15],[100,15],[101,16],[105,20],[300,20]]){

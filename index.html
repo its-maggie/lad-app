@@ -16,8 +16,8 @@
 <script src="updates.js"></script>
 <script src="site-updates.js?v=20261002-3" defer></script>
 <script src="analytics.js?v=20261024-1" defer></script>
-<script src="regional-prices.js?v=20261024-confirmed-regional-prices"></script>
-<script src="packs.js?v=20261024-confirmed-regional-prices"></script>
+<script src="regional-prices.js?v=20261123-subscription-prices"></script>
+<script src="packs.js?v=20261123-subscription-prices"></script>
 <style>
   :root{
     /* pink → purple dream palette (ref: Tulimond) */
@@ -667,21 +667,9 @@
       <details class="subscription-reference" id="subscriptionReference" aria-labelledby="subscriptionCostTitle">
         <summary><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg><span id="subscriptionCostTitle">月卡／週卡每抽成本</span></summary>
         <div class="inner">
-          <span class="subscription-currency">台幣 NT$</span>
-          <!-- 與 App 的 subscriptionCosts.ts 採相同口徑：每抽 150 鑽；月卡不計贈送晶鑽。 -->
-          <dl class="subscription-costs">
-            <div>
-              <dt>月卡</dt>
-              <dd class="subscription-value"><strong>NT$7.5</strong><span>／抽</span></dd>
-              <dd class="subscription-detail">售價 NT$150 · 30 天領滿 3,000 鑽＝20 抽；未計贈送晶鑽</dd>
-            </div>
-            <div>
-              <dt>週卡</dt>
-              <dd class="subscription-value"><strong>NT$31.43</strong><span>／抽</span></dd>
-              <dd class="subscription-detail">售價 NT$220 · 1,050 鑽＝7 抽</dd>
-            </div>
-          </dl>
-          <p class="hint">台灣售價參考；港幣、馬幣價格待補。僅供比較，不計入已選禮包合計。</p>
+          <span class="subscription-currency" id="subscriptionCurrency"></span>
+          <dl class="subscription-costs" id="subscriptionCosts"></dl>
+          <p class="hint" id="subscriptionCostNote"></p>
         </div>
       </details>
       <div id="packTable" style="margin-top:4px"></div>
@@ -1228,6 +1216,16 @@ let currentPackRecommendation=null;
 const savedPackCurrency=DB.get('packCurrency','TWD');
 let packCurrency=Object.hasOwn(window.PACK_CURRENCIES,savedPackCurrency)?savedPackCurrency:'TWD';
 const packMoney=n=>window.formatMoney(n,packCurrency);
+function renderSubscriptionCosts(){
+  const currency=window.PACK_CURRENCIES[packCurrency];
+  document.getElementById('subscriptionCurrency').textContent=`${currency.label} ${currency.symbol}`;
+  document.getElementById('subscriptionCosts').innerHTML=window.getSubscriptionCosts(packCurrency).map(pack=>`<div>
+    <dt>${esc(pack.name)}</dt>
+    <dd class="subscription-value"><strong>${packMoney(pack.perPull)}</strong>${pack.perPull==null?'':'<span>／抽</span>'}</dd>
+    <dd class="subscription-detail">售價 ${packMoney(pack.price)} · ${esc(pack.detail)}</dd>
+  </div>`).join('');
+  document.getElementById('subscriptionCostNote').textContent=window.SUBSCRIPTION_COST_NOTE;
+}
 function setPackCurrency(currency){
   packCurrency=Object.hasOwn(window.PACK_CURRENCIES,currency)?currency:'TWD';
   DB.set('packCurrency',packCurrency);calcPacks();
@@ -1283,6 +1281,7 @@ function updatePackTotal(){
 function calcPacks(){
   const pool=document.getElementById('poolSel').value;
   document.getElementById('packCurrency').value=packCurrency;
+  renderSubscriptionCosts();
   document.getElementById('packPoolLabel').textContent=pool;
   const cur=Number(document.getElementById('curDia').value)||0;
   const tickets=Math.max(0,Number(document.getElementById('curTickets').value)||0);
@@ -1301,8 +1300,10 @@ function calcPacks(){
   currentPackRecommendation=null;
 
   if(pool==='其他'){
-    const arr=(window.PACK_OTHER||[]);
-    const best=Math.min(...arr.map(p=>p.per));
+    const weekly=window.getSubscriptionCosts(packCurrency).find(pack=>pack.name==='週卡');
+    const arr=(window.PACK_OTHER||[]).map(pack=>pack.name==='周卡'?{...pack,price:weekly.price,per:weekly.perPull}:packCurrency==='TWD'?pack:{...pack,price:null,per:null});
+    const best=Math.min(...arr.filter(pack=>pack.per!=null).map(pack=>pack.per));
+    document.getElementById('packPriceNote').hidden=true;
     msg.className='alert good show';msg.innerHTML=svg(I.spark)+'「其他」為定期禮包，無累計抽數，下表為單抽 CP 值參考。';
     table.innerHTML=arr.map(p=>`<div class="item ${p.per===best?'best':''}">
       <span class="ico-chip txt"><b>${esc(p.name).slice(0,2)}</b></span>

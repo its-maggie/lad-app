@@ -1,6 +1,15 @@
 /* 玩家提供的遊戲商店截圖。received 為收到資料日期，並非售價生效日期。
    截圖未提供平台；不同平台、活動或調價可能造成差異。
    單包內容沿用 PACK_DATA，海外售價依卡池及階級分別記錄。 */
+// 月卡／週卡特權商品，與同名卡池禮包分開記錄。
+window.REGIONAL_SUBSCRIPTION_PRICES = [
+  ['HKD',38,58,'月卡&週卡-港幣.JPG'],
+  ['MYR',22.9,34.9,'月卡&週卡-馬幣.JPG']
+].flatMap(([currency,monthly,weekly,file])=>[
+  {pool:'定期禮包',tier:'月卡',currency,price:monthly,source:`references/prices/${file}`,platform:'未提供',received:'2026-11-23'},
+  {pool:'定期禮包',tier:'週卡',currency,price:weekly,source:`references/prices/${file}`,platform:'未提供',received:'2026-11-23'}
+]);
+
 window.REGIONAL_PACK_PRICES = [
   ...[
     ...['月卡復刻池','生日復刻池'].map(pool=>[pool,'月卡生日卡復刻池-港幣.JPG',[30,150,320,390,820],[8,38,68,98,218]]),

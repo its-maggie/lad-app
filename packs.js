@@ -113,6 +113,20 @@ window.PACK_OTHER = [
   {name:"升級版特別密約（只計金券）", price:490, per:40.8},
 ];
 
+// 特權月卡／週卡只計紅鑽，每抽 150 鑽；月卡不含購買時贈送的晶鑽。
+// 月卡台灣售價：https://apps.apple.com/tw/app/id6443468077
+// 鑽石內容：https://shixinote.com/loveanddeepspace-pack/；月卡 3,000 鑽由使用者確認。
+window.SUBSCRIPTION_PACKS = [
+  {name:'月卡',price:150,diamonds:3000,detail:'30 天領滿 3,000 鑽＝20 抽；未計贈送晶鑽',source:'台灣月卡售價與使用者確認獎勵'},
+  {name:'週卡',price:window.PACK_OTHER.find(pack=>pack.name==='周卡').price,diamonds:1050,detail:'1,050 鑽＝7 抽',source:'戀與深空_禮包總表'}
+];
+window.SUBSCRIPTION_COST_NOTE = '外幣售價依玩家提供的商店截圖整理。僅供比較，不計入已選禮包合計。';
+window.getSubscriptionCosts = (currency='TWD')=>window.SUBSCRIPTION_PACKS.map(pack=>{
+  const rows=(window.REGIONAL_SUBSCRIPTION_PRICES||[]).filter(row=>row.tier===pack.name&&row.currency===currency);
+  const price=currency==='TWD'?pack.price:rows.length&&!rows.some(row=>row.price!==rows[0].price)?rows[0].price:null;
+  return {...pack,currency,price,perPull:price==null?null:price/(pack.diamonds/150),priceStatus:price==null?'missing':'confirmed',priceSource:currency==='TWD'?pack.source:rows.map(row=>row.source).join('；')};
+});
+
 window.PACK_CURRENCIES = {
   TWD:{label:'新台幣',symbol:'NT$'},
   HKD:{label:'港幣',symbol:'HK$'},
