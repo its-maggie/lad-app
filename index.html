@@ -585,15 +585,15 @@
         <div class="cal-title" id="calTitle"></div>
         <button class="navbtn" aria-label="下個月" onclick="calMove(1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
       </div>
-      <div class="lead-filter" aria-label="男主篩選">
-        <div class="lead-filter-head"><button class="lead-filter-toggle" id="leadFilterToggle" type="button" aria-expanded="false" aria-controls="leadFilters" onclick="toggleLeadFilterPanel()"><span>男主篩選</span><span id="leadFilterSummary">全部</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button><button class="text-action" type="button" onclick="clearLeadFilters()">清除全部</button></div>
+      <div class="lead-filter" role="group" aria-label="男主篩選">
+        <div class="lead-filter-head"><button class="lead-filter-toggle" id="leadFilterToggle" type="button" aria-expanded="false" aria-controls="leadFilters" onclick="toggleLeadFilterPanel()"><span>男主篩選 <small>可複選</small></span><span id="leadFilterSummary">全部</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button><button class="text-action" type="button" onclick="clearLeadFilters()">重設篩選</button></div>
         <div class="lead-filter-actions" id="leadFilters" hidden>
           <button class="lead-filter-btn all" type="button" data-lead="all" aria-pressed="true" onclick="selectAllLeads()">全部</button>
-          <button class="lead-filter-btn" type="button" data-lead="沈星回" aria-pressed="true" onclick="toggleLead('沈星回')">沈星回</button>
-          <button class="lead-filter-btn" type="button" data-lead="黎深" aria-pressed="true" onclick="toggleLead('黎深')">黎深</button>
-          <button class="lead-filter-btn" type="button" data-lead="祁煜" aria-pressed="true" onclick="toggleLead('祁煜')">祁煜</button>
-          <button class="lead-filter-btn" type="button" data-lead="秦徹" aria-pressed="true" onclick="toggleLead('秦徹')">秦徹</button>
-          <button class="lead-filter-btn" type="button" data-lead="夏以晝" aria-pressed="true" onclick="toggleLead('夏以晝')">夏以晝</button>
+          <button class="lead-filter-btn" type="button" data-lead="沈星回" aria-pressed="false" onclick="toggleLead('沈星回')">沈星回</button>
+          <button class="lead-filter-btn" type="button" data-lead="黎深" aria-pressed="false" onclick="toggleLead('黎深')">黎深</button>
+          <button class="lead-filter-btn" type="button" data-lead="祁煜" aria-pressed="false" onclick="toggleLead('祁煜')">祁煜</button>
+          <button class="lead-filter-btn" type="button" data-lead="秦徹" aria-pressed="false" onclick="toggleLead('秦徹')">秦徹</button>
+          <button class="lead-filter-btn" type="button" data-lead="夏以晝" aria-pressed="false" onclick="toggleLead('夏以晝')">夏以晝</button>
         </div>
       </div>
       <div class="cal-wk"><span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span></div>
@@ -978,12 +978,14 @@ const evLabel={banner:'卡池',merch:'周邊',daily:'日卡池',monthly:'月卡�
 const leadNames=['沈星回','黎深','祁煜','秦徹','夏以晝'];
 const savedLeadFilter=DB.get('leadFilter',null);
 let selectedLeads=new Set(Array.isArray(savedLeadFilter)?savedLeadFilter.filter(name=>leadNames.includes(name)):leadNames);
+if(selectedLeads.size===0)selectedLeads=new Set(leadNames);
 let calY,calM,calSel=null;
 function filteredSchedule(){return SCHED.filter(e=>!Array.isArray(e.leads)||e.leads.length===0||e.leads.some(name=>selectedLeads.has(name)));}
 function syncLeadFilters(){
   document.querySelectorAll('#leadFilters [data-lead]').forEach(btn=>{
     const name=btn.dataset.lead;
-    const active=name==='all'?selectedLeads.size===leadNames.length:selectedLeads.has(name);
+    const all=selectedLeads.size===leadNames.length;
+    const active=name==='all'?all:!all&&selectedLeads.has(name);
     btn.classList.toggle('active',active);btn.setAttribute('aria-pressed',String(active));
   });
   const summary=document.getElementById('leadFilterSummary');
@@ -995,12 +997,14 @@ function toggleLeadFilterPanel(){
   document.getElementById('leadFilterToggle').setAttribute('aria-expanded',String(!panel.hidden));
 }
 function toggleLead(name){
-  if(selectedLeads.has(name))selectedLeads.delete(name);else selectedLeads.add(name);
+  if(selectedLeads.size===leadNames.length)selectedLeads=new Set([name]);
+  else if(selectedLeads.has(name))selectedLeads.delete(name);else selectedLeads.add(name);
+  if(selectedLeads.size===0)selectedLeads=new Set(leadNames);
   DB.set('leadFilter',[...selectedLeads]);calSel=null;renderCal();
   window.LAD_ANALYTICS?.use('calendar','filter_change');
 }
 function selectAllLeads(){selectedLeads=new Set(leadNames);DB.set('leadFilter',leadNames);calSel=null;renderCal();window.LAD_ANALYTICS?.use('calendar','filter_change');}
-function clearLeadFilters(){selectedLeads=new Set();DB.set('leadFilter',[]);calSel=null;renderCal();window.LAD_ANALYTICS?.use('calendar','filter_change');}
+function clearLeadFilters(){selectAllLeads();}
 function dayDiff(d){return Math.ceil((new Date(d+'T00:00:00')-new Date(todayStr()+'T00:00:00'))/86400000);}
 // 預測依資料標記顯示，日期經過後也不會自動視為官方確認。
 function isForecast(e){return !!e.tentative;}
