@@ -7,7 +7,8 @@ const html = fs.readFileSync(new URL('../index.html', import.meta.url), 'utf8');
 const inlineScript = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map(match => match[1]).join('\n');
 const calendar = inlineScript.slice(inlineScript.indexOf('const SCHED='), inlineScript.indexOf('const MONTHLY_DIA='));
 
-function mount(events, today) {
+function mount(events, today, saved = {}) {
+  const storage = structuredClone(saved);
   const elements = new Map();
   const get = id => {
     if (!elements.has(id)) elements.set(id, { textContent: '', innerHTML: '', style: {} });
@@ -16,14 +17,41 @@ function mount(events, today) {
   const context = vm.createContext({
     window: { SCHEDULE: events },
     document: { getElementById: get, querySelectorAll: () => [] },
-    DB: { get: (_, fallback) => fallback },
+    DB: { get: (key, fallback) => storage[key] ?? fallback, set: (key, value) => { storage[key] = structuredClone(value); } },
     todayStr: () => today,
     pad: value => String(value).padStart(2, '0'),
     svg: () => '', esc: value => String(value), I: {}, evIcon: {},
   });
   vm.runInContext(calendar, context);
-  return { context, get };
+  return { context, get, storage };
 }
+
+test('lead filters focus from all, allow multiple leads, persist, and reset when the last lead is removed', () => {
+  const events = [
+    { name: '星回活動', type: 'daily', start: '2026-11-01', end: '2026-11-02', leads: ['沈星回'] },
+    { name: '黎深活動', type: 'daily', start: '2026-11-01', end: '2026-11-02', leads: ['黎深'] },
+    { name: '共同活動', type: 'event', start: '2026-11-01', end: '2026-11-02', leads: [] },
+  ];
+  const { context, get, storage } = mount(events, '2026-11-01');
+  vm.runInContext("calY=2026;calM=10;toggleLead('沈星回');", context);
+  assert.deepEqual(storage.leadFilter, ['沈星回']);
+  assert.match(get('dayList').innerHTML, /星回活動/);
+  assert.doesNotMatch(get('dayList').innerHTML, /黎深活動/);
+  assert.match(get('dayList').innerHTML, /共同活動/);
+  context.toggleLead('黎深');
+  assert.deepEqual(storage.leadFilter, ['沈星回', '黎深']);
+  const reloaded = mount(events, '2026-11-01', storage);
+  assert.equal(reloaded.context.filteredSchedule().length, 3);
+  context.toggleLead('沈星回');
+  assert.deepEqual(storage.leadFilter, ['黎深']);
+  context.toggleLead('黎深');
+  assert.equal(storage.leadFilter.length, 5);
+  context.toggleLead('秦徹');
+  assert.deepEqual(storage.leadFilter, ['秦徹']);
+  context.clearLeadFilters();
+  assert.equal(storage.leadFilter.length, 5);
+  assert.equal(mount(events, '2026-11-01', { leadFilter: [] }).context.filteredSchedule().length, 3);
+});
 
 test('forecasts retain their status after the event ends; confirmed events remain distinct', () => {
   const forecast = { name: '預測生日池', type: 'birthday', start: '2027-02-27', end: '2027-03-07', tentative: true, leads: [] };
